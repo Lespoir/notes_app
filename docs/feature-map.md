@@ -56,6 +56,20 @@ Only include sections/lines that exist for the feature. -->
   - Root layout: `apps/web/src/app/layout.tsx` — `<html>`, `<body>`, `QueryProvider` root wrapper
   - Test setup: `apps/web/vitest.config.ts`, `apps/web/vitest.setup.ts`
   - Tests: `apps/web/src/lib/query/__tests__/QueryProvider.test.tsx`
+- **Frontend (Task 0C — Design System Foundation)**
+  - Theme tokens: `apps/web/src/notesDS/tailwind.css` — `@theme` block with color, radius, shadow, font tokens (Tailwind v4)
+  - Globals: `apps/web/src/app/globals.css` — imports notesDS theme tokens
+  - Utility: `apps/web/src/notesDS/utils/cn.ts` — `cn()` helper (clsx + tailwind-merge)
+  - Layout primitive: `apps/web/src/notesDS/primitives/stack.tsx` — vertical flex container with gap/align/justify/as variants
+  - Layout primitive: `apps/web/src/notesDS/primitives/row.tsx` — horizontal flex container with gap/align/justify/wrap/as variants
+  - Layout primitive: `apps/web/src/notesDS/primitives/container.tsx` — centered max-width wrapper with size variants (sm/md/lg/xl/full)
+  - Layout primitive: `apps/web/src/notesDS/primitives/section.tsx` — semantic section with vertical padding and gap variants
+  - Layout primitive: `apps/web/src/notesDS/primitives/cardShell.tsx` — bordered rounded surface with padding variants
+  - Typography: `apps/web/src/notesDS/components/ui/typography.tsx` — H1–H4, P, Large, Small, Muted, Lead, Overline
+  - Component: `apps/web/src/notesDS/components/ui/button.tsx` — Button with CVA variants (primary, secondary, ghost, icon)
+  - Component: `apps/web/src/notesDS/components/ui/input.tsx` — Input with CVA variants (default, error, ghost)
+  - Barrel exports: `apps/web/src/notesDS/index.ts` — re-exports all primitives, typography, components, utils
+  - Dependencies added: `class-variance-authority`, `clsx`, `tailwind-merge`
 
 ## Authentication
 

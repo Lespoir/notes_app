@@ -1,0 +1,69 @@
+/*
+  notesDS design tokens — Tailwind v4 @theme layer
+  All tokens are derived from the Figma design file.
+  Reference these via the generated CSS custom properties (e.g. bg-background, text-primary).
+*/
+
+@theme {
+  /* ── Colors ──────────────────────────────────────────────────── */
+
+  /* App background — warm cream */
+  --color-background: oklch(96.5% 0.025 85);
+
+  /* Foreground / default text — near-black */
+  --color-foreground: oklch(20% 0.01 85);
+
+  /* Primary brand — warm brown/gold (button borders, links, accents) */
+  --color-primary: oklch(52% 0.09 70);
+  --color-primary-foreground: oklch(96.5% 0.025 85);
+
+  /* Secondary — outlined style, cream tint surface */
+  --color-secondary: oklch(93% 0.02 85);
+  --color-secondary-foreground: oklch(52% 0.09 70);
+
+  /* Destructive / error */
+  --color-destructive: oklch(55% 0.18 25);
+  --color-destructive-foreground: oklch(98% 0 0);
+
+  /* Heading accent — darker warm brown */
+  --color-heading: oklch(44% 0.09 65);
+
+  /* Muted text */
+  --color-muted-foreground: oklch(55% 0.04 75);
+
+  /* Surface / card backgrounds */
+  --color-surface: oklch(100% 0 0);
+
+  /* Input border — same as primary */
+  --color-input: oklch(52% 0.09 70);
+
+  /* Note category colors */
+  --color-category-orange: oklch(74% 0.12 47);          /* #ef9c66 */
+  --color-category-orange-bg: oklch(74% 0.12 47 / 50%); /* card bg */
+  --color-category-yellow: oklch(88% 0.1 85);           /* #fcdc94 */
+  --color-category-yellow-bg: oklch(88% 0.1 85 / 50%);  /* card bg */
+  --color-category-teal: oklch(65% 0.065 195);          /* #78aba8 */
+  --color-category-teal-bg: oklch(65% 0.065 195 / 50%); /* card bg */
+
+  /* Dark action button (voice input) */
+  --color-action-dark: oklch(22% 0 0);          /* #2c2c2c */
+  --color-action-dark-foreground: oklch(100% 0 0);
+
+  /* Caption / overline text */
+  --color-caption: oklch(52% 0.09 70);
+
+  /* ── Border radius ───────────────────────────────────────────── */
+  --radius-sm: 6px;
+  --radius-md: 11px;
+  --radius-lg: 16px;
+  --radius-pill: 46px;
+
+  /* ── Shadows ─────────────────────────────────────────────────── */
+  --shadow-card: 1px 1px 2px 0px oklch(0% 0 0 / 25%);
+
+  /* ── Typography ──────────────────────────────────────────────── */
+  /* UI font */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  /* Display / title font */
+  --font-display: "Inria Serif", ui-serif, Georgia, serif;
+}
