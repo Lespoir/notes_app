@@ -20,8 +20,10 @@ class OpenAPISchemaEndpointTest(TestCase):
         response = self.client.get("/api/v1/schema/")
 
         content_type = response.get("Content-Type", "")
+        # drf-spectacular returns application/vnd.oai.openapi (YAML) or application/json
         self.assertTrue(
-            "yaml" in content_type or "json" in content_type or "text/" in content_type,
+            "yaml" in content_type or "json" in content_type
+            or "text/" in content_type or "openapi" in content_type,
             msg=f"Unexpected Content-Type for schema endpoint: {content_type}",
         )
 
