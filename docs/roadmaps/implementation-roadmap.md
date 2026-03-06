@@ -112,6 +112,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 
 ### Task 2A: Categories Backend
 **Status:** done
+**PR:** https://github.com/Lespoir/notes_app/pull/6
 **Scope:** Category model, seed data, list endpoint
 **Delivers:**
 - Category model (title, color) in `notes` app
