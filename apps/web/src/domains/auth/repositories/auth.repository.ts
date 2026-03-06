@@ -38,7 +38,8 @@ export const useAuthRepository = () => {
 
   const login = async (credentials: { email: string; password: string }): Promise<void> => {
     const dto = await loginMutation({ data: { email: credentials.email, password: credentials.password } });
-    setToken(dto.key);
+    if (dto.status !== 200) throw new Error('Login failed');
+    setToken(dto.data.key);
     invalidate();
   };
 
@@ -51,7 +52,8 @@ export const useAuthRepository = () => {
         password2: credentials.password,
       },
     });
-    setToken(dto.key);
+    if (dto.status !== 201) throw new Error('Registration failed');
+    setToken(dto.data.key);
     invalidate();
   };
 

@@ -6,7 +6,7 @@ const apiUrl = process.env.API_URL ?? "http://localhost:8000";
 export default defineConfig({
   notes: {
     input: {
-      target: isCI ? "../api/schema.yaml" : `${apiUrl}/api/schema/`,
+      target: isCI ? "../api/schema.yaml" : `${apiUrl}/api/v1/schema/`,
     },
     output: {
       mode: "tags-split",
