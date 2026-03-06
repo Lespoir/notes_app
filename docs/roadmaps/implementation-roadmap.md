@@ -126,7 +126,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 **Blocks:** Task 3A (notes belong to categories)
 
 ### Task 2B: Categories Frontend Domain
-**Status:** pending
+**Status:** done
 **Scope:** Category domain layer only (no UI yet — sidebar is built in Phase 4)
 **Delivers:**
 - Generate API hooks via Orval from categories endpoints
