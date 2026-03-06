@@ -72,8 +72,8 @@
 
 | # | Feature | Status |
 |---|---------|--------|
-| 5.1 | Three default categories auto-created for new users: Random Thoughts, School, Personal | 🟡 |
-| 5.2 | Each category has an associated color | 🟡 |
+| 5.1 | Three default categories auto-created for new users: Random Thoughts, School, Personal | ✅ |
+| 5.2 | Each category has an associated color | ✅ |
 | 5.3 | Category sidebar displays: color indicator, category title, and note count | 🟡 |
 | 5.4 | "All categories" option to view all notes | 🟡 |
 | 5.5 | Click a category to filter notes by that category | 🟡 |

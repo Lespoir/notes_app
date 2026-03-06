@@ -50,4 +50,11 @@ def register_user(*, email: str, password: str) -> User:
         )
 
     user = User.objects.create_user(email=email, password=password)
+
+    # Seed default categories for the new user.
+    # Side effects for a new user registration are explicit here in the action,
+    # not scattered across serializers or signals.
+    from notes.actions.seed_categories import seed_default_categories
+    seed_default_categories(user=user)
+
     return user
