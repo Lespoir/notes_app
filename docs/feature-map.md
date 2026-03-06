@@ -89,6 +89,29 @@ Only include sections/lines that exist for the feature. -->
   - Tests: `apps/api/accounts/tests/test_auth_api.py` — API contract tests for all four auth endpoints + OpenAPI schema presence
   - Shared lib: `apps/api/lib/errors.py` — `BusinessError`, `NotFoundError`, `PermissionDeniedError`, `UnauthenticatedError`, `ConflictError`, `ValidationError`, `RateLimitError`
   - Shared lib: `apps/api/lib/exceptions.py` — `exception_handler()` — maps domain errors to HTTP responses in the standard `{ error: { code, message, details } }` shape
+- **Frontend (Task 1B — Auth Frontend)**
+  - Generated models: `apps/web/src/data/generated/model/registerInputSchema.ts`, `loginInputSchema.ts`, `tokenOutputSchema.ts`, `index.ts`
+  - Generated hooks: `apps/web/src/data/generated/auth/auth.ts` — `useAuthRegister`, `useAuthLogin`, `useAuthLogout`, `useAuthTokenRefresh` (TanStack Query v5 useMutation wrappers)
+  - Token storage: `apps/web/src/lib/auth/tokenStorage.ts` — `getToken()`, `setToken()`, `clearToken()`; writes both localStorage and a browser cookie for middleware auth checks
+  - Auth state hook: `apps/web/src/lib/auth/authState.ts` — `useAuthState()` — reactive auth state (isAuthenticated, token, login, logout)
+  - Auth guard: `apps/web/src/lib/auth/authGuard.tsx` — `AuthGuard` component — client-side route protection, redirects to /auth/login when unauthenticated
+  - Lib barrel: `apps/web/src/lib/auth/index.ts`
+  - Fetcher update: `apps/web/src/lib/api/fetcher.ts` — attaches `Authorization: Token <key>` header on every request when authenticated
+  - Auth entity: `apps/web/src/domains/auth/entities/auth.entity.ts` — `AuthToken`, `AuthUser`
+  - Auth schema: `apps/web/src/domains/auth/schemas/auth.schema.ts` — `loginSchema`, `signUpSchema` (Zod v4); exports `LoginInput`, `SignUpInput`
+  - Auth rules: `apps/web/src/domains/auth/rules/auth.rules.ts` — `togglePasswordVisibility()`, `isAuthenticated()`, `getAuthRedirectPath()` (pure functions)
+  - Auth repository: `apps/web/src/domains/auth/repositories/auth.repository.ts` — `useAuthRepository()` — wraps generated hooks, stores token on success, invalidates auth query cache
+  - Login screen hook: `apps/web/src/features/login/hooks/useLogin.ts` — form state, Zod validation, repository call, redirect to /notes
+  - Login form: `apps/web/src/features/login/components/LoginForm.tsx`
+  - Signup screen hook: `apps/web/src/features/signup/hooks/useSignup.ts` — form state, Zod validation, repository call, redirect to /notes
+  - Signup form: `apps/web/src/features/signup/components/SignupForm.tsx`
+  - Password toggle: `apps/web/src/features/login/components/PasswordToggle.tsx` — shared between login and signup
+  - Login page: `apps/web/src/app/auth/login/page.tsx`
+  - Signup page: `apps/web/src/app/auth/signup/page.tsx`
+  - Notes placeholder page: `apps/web/src/app/notes/page.tsx` — redirect target after auth (full implementation in Task 4A)
+  - Root page: `apps/web/src/app/page.tsx` — redirects to /notes (middleware handles final destination)
+  - Auth guard middleware: `apps/web/src/middleware.ts` — Edge middleware; reads `auth_token` cookie; unauthenticated → /auth/login, authenticated on /auth/* → /notes
+  - Dependency added: `zod` ^4.3.6 (was already installed transitively via orval)
 
 ## Notes List Screen
 

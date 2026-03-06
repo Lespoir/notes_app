@@ -16,11 +16,11 @@
 
 | # | Feature | Status |
 |---|---------|--------|
-| 1.1 | Sign up screen with email and password fields | 🟡 |
-| 1.2 | Login screen with email and password fields | 🟡 |
-| 1.3 | Toggle password visibility (show/hide) on both sign up and login | 🟡 |
-| 1.4 | Navigation between sign up and login screens | 🟡 |
-| 1.5 | Redirect to notes screen after successful sign up or login | 🟡 |
+| 1.1 | Sign up screen with email and password fields | ✅ |
+| 1.2 | Login screen with email and password fields | ✅ |
+| 1.3 | Toggle password visibility (show/hide) on both sign up and login | ✅ |
+| 1.4 | Navigation between sign up and login screens | ✅ |
+| 1.5 | Redirect to notes screen after successful sign up or login | ✅ |
 
 ## 2. Notes List Screen
 

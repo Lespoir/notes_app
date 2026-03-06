@@ -28,6 +28,32 @@ jobs:
         working-directory: apps/web
         run: npm ci
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: apps/api/requirements.txt
+
+      - name: Install API dependencies
+        working-directory: apps/api
+        run: pip install -r requirements.txt
+
+      - name: Generate OpenAPI schema
+        working-directory: apps/api
+        env:
+          DJANGO_SETTINGS_MODULE: config.settings
+          DJANGO_SECRET_KEY: ci-schema-gen-secret
+          DB_NAME: placeholder
+          DB_USER: placeholder
+          DB_PASSWORD: placeholder
+          DB_HOST: localhost
+          DB_PORT: '5432'
+        run: python manage.py spectacular --file schema.yaml
+
+      - name: Generate API types
+        working-directory: apps/web
+        run: npm run generate
+
       - name: Type check
         working-directory: apps/web
         run: npx tsc --noEmit

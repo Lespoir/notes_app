@@ -31,7 +31,7 @@ FAILURES=""
 
 # ── Backend tests ────────────────────────────────────────────────────────────
 if [ "$BACKEND_CHANGED" = true ]; then
-  echo "Running backend tests..."
+  echo "Running backend tests..." >&2
   BACKEND_OUTPUT=$(cd "$REPO_ROOT/apps/api" && \
     uv run python manage.py test --verbosity=1 2>&1) || true
 
@@ -40,32 +40,55 @@ if [ "$BACKEND_CHANGED" = true ]; then
 
 === Backend test failures ===
 ${BACKEND_OUTPUT}"
+    echo "Backend tests FAILED." >&2
   else
-    echo "Backend tests passed."
+    echo "Backend tests passed." >&2
   fi
 fi
 
 # ── Frontend tests ───────────────────────────────────────────────────────────
 if [ "$FRONTEND_CHANGED" = true ]; then
-  echo "Running frontend type-check..."
-  FRONTEND_OUTPUT=$(cd "$REPO_ROOT/apps/web" && \
-    npx tsc --noEmit 2>&1) || true
+  echo "Regenerating API types..." >&2
+  if GENERATE_OUTPUT=$(cd "$REPO_ROOT/apps/web" && npm run generate 2>&1); then
+    echo "API types up to date." >&2
 
-  if [ -n "$FRONTEND_OUTPUT" ]; then
-    FAILURES="${FAILURES}
+    echo "Running frontend type-check..." >&2
+    FRONTEND_TSC=$(cd "$REPO_ROOT/apps/web" && npx tsc --noEmit 2>&1) || true
+
+    if [ -n "$FRONTEND_TSC" ]; then
+      FAILURES="${FAILURES}
 
 === Frontend type errors ===
-${FRONTEND_OUTPUT}"
+${FRONTEND_TSC}"
+      echo "Frontend type-check FAILED." >&2
+    else
+      echo "Frontend type-check passed." >&2
+    fi
   else
-    echo "Frontend type-check passed."
+    echo "⚠ Skipping type-check: could not regenerate API types (is the backend running?)." >&2
+  fi
+
+  echo "Running frontend tests..." >&2
+  FRONTEND_TESTS=$(cd "$REPO_ROOT/apps/web" && npm test 2>&1) || true
+
+  if echo "$FRONTEND_TESTS" | grep -qE "FAIL|Error:"; then
+    FAILURES="${FAILURES}
+
+=== Frontend test failures ===
+${FRONTEND_TESTS}"
+    echo "Frontend tests FAILED." >&2
+  else
+    echo "Frontend tests passed." >&2
   fi
 fi
 
 # ── Report ───────────────────────────────────────────────────────────────────
 if [ -n "$FAILURES" ]; then
-  echo ""
+  # stdout: detailed failures for Claude to read and fix
   echo "Tests failed. Fix the following issues before finishing:"
   echo "$FAILURES"
+  # stderr: brief summary visible in the Claude Code UI
+  echo "Tests failed. See details above." >&2
   exit 2
 fi
 
