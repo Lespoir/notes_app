@@ -71,6 +71,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 
 ### Task 1A: Auth Backend
 **Status:** done
+**PR:** https://github.com/Lespoir/notes_app/pull/4
 **Scope:** Auth endpoints, user model, token management
 **Delivers:**
 - Set up `dj-rest-auth` + `django-allauth` (see ADR-001)
