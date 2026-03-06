@@ -32,7 +32,7 @@ Only include sections/lines that exist for the feature. -->
 
 - **Backend**
   - Config: `apps/api/config/settings.py` — INSTALLED_APPS, AUTH_USER_MODEL, DATABASES (PostgreSQL), REST_FRAMEWORK, SPECTACULAR_SETTINGS
-  - URLs: `apps/api/config/urls.py` — `/api/v1/schema/`, `/api/v1/schema/swagger-ui/`, `/api/v1/accounts/`, `/api/v1/notes/`
+  - URLs: `apps/api/config/urls.py` — `/api/v1/schema/`, `/api/v1/schema/swagger-ui/`, `/api/v1/auth/`, `/api/v1/notes/`
   - Models: `apps/api/accounts/models.py` — custom `User` (email as USERNAME_FIELD)
   - Models: `apps/api/notes/models.py` — `Category` (title, color, UUID PK), `Note` (title, content, category FK, owner FK, UUID PK)
   - Migrations: `apps/api/accounts/migrations/0001_initial.py`
@@ -73,7 +73,22 @@ Only include sections/lines that exist for the feature. -->
 
 ## Authentication
 
-<!-- Not yet implemented -->
+### Code Paths
+
+- **Backend (Task 1A — Auth Backend)**
+  - Dependencies: `apps/api/requirements.txt` — added `django-allauth[account]`, `dj-rest-auth`
+  - Config: `apps/api/config/settings.py` — added `django.contrib.sites`, `rest_framework.authtoken`, `allauth`, `allauth.account`, `dj_rest_auth`, `dj_rest_auth.registration` to INSTALLED_APPS; `allauth.account.middleware.AccountMiddleware` to MIDDLEWARE; switched `DEFAULT_AUTHENTICATION_CLASSES` to `TokenAuthentication`; added `ACCOUNT_*` settings, `REST_AUTH` settings
+  - URLs: `apps/api/config/urls.py` — `/api/v1/auth/` mounts `accounts.interfaces.api.urls`
+  - Action: `apps/api/accounts/actions/register.py` — `register_user(email, password)` — creates user, raises `ConflictError` on duplicate email
+  - Action: `apps/api/accounts/actions/login.py` — `login_user(email, password)` — authenticates user, returns `(User, token_key)` tuple, raises `ValidationError` on bad credentials
+  - Action: `apps/api/accounts/actions/logout.py` — `logout_user(token)` — deletes token, effectively invalidating the session
+  - Schemas: `apps/api/accounts/interfaces/api/schemas.py` — `RegisterInputSchema`, `LoginInputSchema`, `TokenOutputSchema`, `UserOutputSchema`
+  - Views: `apps/api/accounts/interfaces/api/views.py` — `AuthRegisterView`, `AuthLoginView`, `AuthLogoutView`, `AuthTokenRefreshView` (all with `@extend_schema`)
+  - URLs: `apps/api/accounts/interfaces/api/urls.py` — `POST /api/v1/auth/register/`, `POST /api/v1/auth/login/`, `POST /api/v1/auth/logout/`, `POST /api/v1/auth/token/refresh/`
+  - Tests: `apps/api/accounts/tests/test_actions.py` — unit tests for `register_user`, `login_user`, `logout_user`
+  - Tests: `apps/api/accounts/tests/test_auth_api.py` — API contract tests for all four auth endpoints + OpenAPI schema presence
+  - Shared lib: `apps/api/lib/errors.py` — `BusinessError`, `NotFoundError`, `PermissionDeniedError`, `UnauthenticatedError`, `ConflictError`, `ValidationError`, `RateLimitError`
+  - Shared lib: `apps/api/lib/exceptions.py` — `exception_handler()` — maps domain errors to HTTP responses in the standard `{ error: { code, message, details } }` shape
 
 ## Notes List Screen
 
