@@ -47,6 +47,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 
 ### Task 0C: Design System Foundation
 **Status:** done
+**PR:** https://github.com/Lespoir/notes_app/pull/3
 **Scope:** Core notesDS primitives and typography
 **Delivers:**
 - Layout primitives: `Stack`, `Row`, `Container`, `Section`, `CardShell`
