@@ -26,7 +26,7 @@ Developer reference mapping implemented features to their code paths across the 
 
 Only include sections/lines that exist for the feature. -->
 
-## Task 0A: Backend Project Setup (Infrastructure)
+## Infrastructure
 
 ### Code Paths
 
@@ -45,3 +45,31 @@ Only include sections/lines that exist for the feature. -->
   - Dependencies: `apps/api/requirements.txt` — Django, djangorestframework, drf-spectacular, psycopg[binary]
   - Docker: `apps/api/Dockerfile`
   - Docker: `docker-compose.yml` — `db` (postgres:16-alpine) and `api` services
+
+## Authentication
+
+<!-- Not yet implemented -->
+
+## Notes List Screen
+
+<!-- Not yet implemented -->
+
+## Note Creation
+
+<!-- Not yet implemented -->
+
+## Note Editing
+
+<!-- Not yet implemented -->
+
+## Categories
+
+<!-- Not yet implemented -->
+
+## Voice Input
+
+<!-- Not yet implemented -->
+
+## Date Display
+
+<!-- Not yet implemented -->
