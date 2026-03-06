@@ -32,7 +32,7 @@ Only include sections/lines that exist for the feature. -->
 
 - **Backend**
   - Config: `apps/api/config/settings.py` — INSTALLED_APPS, AUTH_USER_MODEL, DATABASES (PostgreSQL), REST_FRAMEWORK, SPECTACULAR_SETTINGS
-  - URLs: `apps/api/config/urls.py` — `/api/v1/schema/`, `/api/v1/schema/swagger-ui/`, `/api/v1/auth/`, `/api/v1/notes/`
+  - URLs: `apps/api/config/urls.py` — `/api/v1/schema/`, `/api/v1/schema/swagger-ui/`, `/api/v1/auth/`, `/api/v1/categories/`
   - Models: `apps/api/accounts/models.py` — custom `User` (email as USERNAME_FIELD)
   - Models: `apps/api/notes/models.py` — `Category` (title, color, UUID PK), `Note` (title, content, category FK, owner FK, UUID PK)
   - Migrations: `apps/api/accounts/migrations/0001_initial.py`
@@ -127,7 +127,21 @@ Only include sections/lines that exist for the feature. -->
 
 ## Categories
 
-<!-- Not yet implemented -->
+### Code Paths
+
+- **Backend (Task 2A — Categories Backend)**
+  - Model: `apps/api/notes/models.py` — `Category` updated to add `user` FK (ForeignKey to AUTH_USER_MODEL, CASCADE, related_name `categories`)
+  - Migration: `apps/api/notes/migrations/0002_category_user.py` — adds `user` FK to `Category`
+  - Action: `apps/api/notes/actions/seed_categories.py` — `seed_default_categories(user)` — bulk-creates 3 default categories (Random Thoughts #F5A623, School #4A90E2, Personal #7ED321) for a given user
+  - Reader: `apps/api/notes/readers/list_categories.py` — `list_categories_for_user(user)` — filters by user, annotates with `note_count` via `Count("notes")`
+  - Schemas: `apps/api/notes/interfaces/api/schemas.py` — `CategoryOutputSchema` (id, title, color, note_count, created_at)
+  - Views: `apps/api/notes/interfaces/api/views.py` — `CategoryListView` (GET, `@extend_schema`, `IsAuthenticated`)
+  - URLs: `apps/api/notes/interfaces/api/urls.py` — `GET /api/v1/categories/`
+  - Config URLs: `apps/api/config/urls.py` — mounts `notes.interfaces.api.urls` at `/api/v1/categories/`
+  - Registration hook: `apps/api/accounts/actions/register.py` — `register_user()` calls `seed_default_categories(user=user)` after creating the user (side effect explicit in action layer)
+  - Tests: `apps/api/notes/tests/test_actions.py` — unit tests for `seed_default_categories` and registration hook
+  - Tests: `apps/api/notes/tests/test_readers.py` — unit tests for `list_categories_for_user` (note count, isolation)
+  - Tests: `apps/api/notes/tests/test_categories_api.py` — API contract tests for `GET /api/v1/categories/` (auth, response shape, note counts, user isolation, registration flow, OpenAPI schema)
 
 ## Voice Input
 

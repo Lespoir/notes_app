@@ -111,7 +111,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 > Features: 5.1, 5.2
 
 ### Task 2A: Categories Backend
-**Status:** pending
+**Status:** done
 **Scope:** Category model, seed data, list endpoint
 **Delivers:**
 - Category model (title, color) in `notes` app

@@ -41,6 +41,7 @@ class RegisterInputSchema(serializers.Serializer):
     def save(self, request):
         # dj-rest-auth calls save() on the registration serializer.
         # Delegate to our action so business logic stays in the right layer.
+        # The action handles all side effects including seeding default categories.
         from accounts.actions.register import register_user
 
         email = self.validated_data["email"]

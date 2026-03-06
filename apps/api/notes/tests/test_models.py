@@ -68,15 +68,24 @@ class NoteModelTest(TestCase):
 
 
 class CategoryModelTest(TestCase):
-    """Tests for the Category model stub delivered by task 0A."""
+    """Tests for the Category model delivered by task 2A."""
+
+    def setUp(self):
+        from accounts.models import User
+
+        self.user = User.objects.create_user(
+            email="catuser@example.com",
+            password="testpass123",
+        )
 
     def test_category_can_be_created_with_title_and_color(self):
-        """Category can be created with a title and a color."""
+        """Category can be created with a title, color, and owner."""
         from notes.models import Category
 
         category = Category.objects.create(
             title="Personal",
             color="#FF5733",
+            user=self.user,
         )
 
         self.assertEqual(category.title, "Personal")
@@ -86,7 +95,7 @@ class CategoryModelTest(TestCase):
         """Category must have a title."""
         from notes.models import Category
 
-        category = Category(title="School", color="#3498DB")
+        category = Category(title="School", color="#3498DB", user=self.user)
 
         self.assertEqual(category.title, "School")
 
@@ -94,7 +103,7 @@ class CategoryModelTest(TestCase):
         """Category stores the color value as provided."""
         from notes.models import Category
 
-        category = Category.objects.create(title="Work", color="#2ECC71")
+        category = Category.objects.create(title="Work", color="#2ECC71", user=self.user)
 
         # Re-fetch from DB to confirm persistence
         fetched = Category.objects.get(pk=category.pk)
@@ -104,8 +113,8 @@ class CategoryModelTest(TestCase):
         """Multiple distinct categories can coexist."""
         from notes.models import Category
 
-        Category.objects.create(title="Random Thoughts", color="#AAB7B8")
-        Category.objects.create(title="School", color="#1ABC9C")
-        Category.objects.create(title="Personal", color="#E74C3C")
+        Category.objects.create(title="Random Thoughts", color="#AAB7B8", user=self.user)
+        Category.objects.create(title="School", color="#1ABC9C", user=self.user)
+        Category.objects.create(title="Personal", color="#E74C3C", user=self.user)
 
-        self.assertEqual(Category.objects.count(), 3)
+        self.assertEqual(Category.objects.filter(user=self.user).count(), 3)
