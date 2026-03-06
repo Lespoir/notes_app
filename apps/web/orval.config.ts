@@ -1,9 +1,12 @@
 import { defineConfig } from "orval";
 
+const isCI = Boolean(process.env.CI);
+const apiUrl = process.env.API_URL ?? "http://localhost:8000";
+
 export default defineConfig({
   notes: {
     input: {
-      target: "http://localhost:8000/api/schema/",
+      target: isCI ? "../api/schema.yaml" : `${apiUrl}/api/schema/`,
     },
     output: {
       mode: "tags-split",
