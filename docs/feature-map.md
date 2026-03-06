@@ -45,6 +45,17 @@ Only include sections/lines that exist for the feature. -->
   - Dependencies: `apps/api/requirements.txt` — Django, djangorestframework, drf-spectacular, psycopg[binary]
   - Docker: `apps/api/Dockerfile`
   - Docker: `docker-compose.yml` — `db` (postgres:16-alpine) and `api` services
+- **Frontend (Task 0B — Project Structure)**
+  - Directory scaffolding: `apps/web/src/app/`, `apps/web/src/data/`, `apps/web/src/domains/`, `apps/web/src/features/`, `apps/web/src/notesDS/`, `apps/web/src/lib/`
+  - Path alias: `apps/web/tsconfig.json` — `@/*` → `./src/*`
+  - Orval config: `apps/web/orval.config.ts` — input `http://localhost:8000/api/schema/`, output `src/data/generated`, client `react-query`, mutator `src/lib/api/fetcher.ts`
+  - Custom fetch: `apps/web/src/lib/api/fetcher.ts` — base URL from `NEXT_PUBLIC_API_URL`, `credentials: include`
+  - Query client: `apps/web/src/lib/query/query-client.ts` — `makeQueryClient()` factory + `queryClient` singleton
+  - Query provider: `apps/web/src/lib/query/QueryProvider.tsx` — wraps children in `QueryClientProvider` + `ReactQueryDevtools`
+  - Query barrel: `apps/web/src/lib/query/index.ts` — exports `makeQueryClient`, `queryClient`, `QueryProvider`
+  - Root layout: `apps/web/src/app/layout.tsx` — `<html>`, `<body>`, `QueryProvider` root wrapper
+  - Test setup: `apps/web/vitest.config.ts`, `apps/web/vitest.setup.ts`
+  - Tests: `apps/web/src/lib/query/__tests__/QueryProvider.test.tsx`
 
 ## Authentication
 
