@@ -35,11 +35,18 @@ Classify the task:
 
 ## Step 4: Create a feature branch
 
-Pull the latest from main before branching to minimize conflicts:
+**MANDATORY — do this in order, no exceptions:**
 
-```
-git checkout master && git pull origin master && git checkout -b task/$ARGUMENTS
-```
+1. Checkout master and pull latest changes:
+   ```
+   git checkout master && git pull origin master
+   ```
+   Do NOT skip this. Always start from an up-to-date master.
+
+2. Then create the feature branch:
+   ```
+   git checkout -b task/$ARGUMENTS
+   ```
 
 ## Step 5: Launch sub-agents
 
