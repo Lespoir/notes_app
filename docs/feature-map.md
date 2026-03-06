@@ -142,6 +142,12 @@ Only include sections/lines that exist for the feature. -->
   - Tests: `apps/api/notes/tests/test_actions.py` — unit tests for `seed_default_categories` and registration hook
   - Tests: `apps/api/notes/tests/test_readers.py` — unit tests for `list_categories_for_user` (note count, isolation)
   - Tests: `apps/api/notes/tests/test_categories_api.py` — API contract tests for `GET /api/v1/categories/` (auth, response shape, note counts, user isolation, registration flow, OpenAPI schema)
+- **Frontend (Task 2B — Categories Frontend Domain)**
+  - Generated model: `apps/web/src/data/generated/model/categoryOutputSchema.ts` — `CategoryOutputSchema` interface (id, title, color, note_count, created_at)
+  - Generated hooks: `apps/web/src/data/generated/categories/categories.ts` — `useCategoriesList` (TanStack Query v5 useQuery wrapper for `GET /api/v1/categories/`)
+  - Entity: `apps/web/src/domains/categories/entities/category.entity.ts` — `CategoryEntity` (id, title, color, noteCount, createdAt)
+  - Schema: `apps/web/src/domains/categories/schemas/category.schema.ts` — `categoryFilterSchema` (optional UUID categoryId for filtering); exports `CategoryFilterInput`
+  - Repository: `apps/web/src/domains/categories/repositories/categories.repository.ts` — `useCategoriesRepository()` — wraps generated hook, maps DTOs to `CategoryEntity`; exports `toCategoryEntity` mapper
 
 ## Voice Input
 
