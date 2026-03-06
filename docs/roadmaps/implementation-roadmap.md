@@ -32,7 +32,8 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 **Blocks:** Phase 1, Phase 2, Phase 3
 
 ### Task 0B: Frontend Project Structure
-**Status:** pending
+**Status:** done
+**PR:** https://github.com/Lespoir/notes_app/pull/2
 **Scope:** Directory scaffolding, path aliases, base configuration
 **Delivers:**
 - Create `src/` directory structure (`app/`, `data/`, `domains/`, `features/`, `notesDS/`, `lib/`)
