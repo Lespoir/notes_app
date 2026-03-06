@@ -9,7 +9,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 - Tasks across phases are **sequential** — a phase starts only after its dependencies are complete
 - Feature references (e.g., `1.1`) map to `docs/product/features.md`
 - **Status** uses: `pending`, `done`
-- **PR** is added after implementation with the PR number (e.g., `#12`)
+- **PR** is added after implementation with the full PR URL (e.g., `https://github.com/org/repo/pull/12`)
 
 ---
 
@@ -19,7 +19,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 
 ### Task 0A: Backend Project Setup
 **Status:** done
-**PR:** #1
+**PR:** https://github.com/Lespoir/notes_app/pull/1
 **Scope:** Django apps, database config, base models, OpenAPI config
 **Delivers:**
 - Create `notes` and `accounts` Django apps with model stubs (User, Note, Category)
