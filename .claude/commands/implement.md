@@ -35,7 +35,11 @@ Classify the task:
 
 ## Step 4: Create a feature branch
 
-Run: `git checkout -b task/$ARGUMENTS` from the main branch.
+Pull the latest from main before branching to minimize conflicts:
+
+```
+git checkout master && git pull origin master && git checkout -b task/$ARGUMENTS
+```
 
 ## Step 5: Launch sub-agents
 
@@ -162,4 +166,7 @@ After the review agent completes:
    - Title: `feat: task $ARGUMENTS — <task title>`
    - Body: summary of what was implemented (from the **Delivers** section), list of files changed, and a test plan
 4. Update `docs/roadmaps/implementation-roadmap.md` — add `**PR:** #<number>` to the task section (right after the `**Status:**` line), commit and push this update
-5. Report the PR URL to the user
+5. **Verify the PR has no conflicts:** Run `gh pr view <number> --json mergeable,mergeStateStatus --jq '{mergeable, mergeStateStatus}'`. Wait up to 10 seconds for GitHub to compute mergeability (retry once if status is `UNKNOWN`).
+   - If `mergeable` is `CONFLICTING`: fetch the latest main, merge it into the branch (`git fetch origin && git merge origin/master`), resolve any conflicts by keeping the branch changes (use `git checkout --ours <file>` for doc/tracking files, and carefully merge code files), commit, and push. Re-check until the PR shows `MERGEABLE`.
+   - If `mergeable` is `MERGEABLE`: proceed.
+6. Report the PR URL to the user
