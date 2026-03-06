@@ -8,6 +8,8 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 - Tasks within the same phase that have no dependency on each other can run **in parallel**
 - Tasks across phases are **sequential** — a phase starts only after its dependencies are complete
 - Feature references (e.g., `1.1`) map to `docs/product/features.md`
+- **Status** uses: `pending`, `done`
+- **PR** is added after implementation with the full PR URL (e.g., `https://github.com/org/repo/pull/12`)
 
 ---
 
@@ -16,6 +18,8 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 > Goal: Establish the backend skeleton, frontend project structure, and design system base.
 
 ### Task 0A: Backend Project Setup
+**Status:** done
+**PR:** https://github.com/Lespoir/notes_app/pull/1
 **Scope:** Django apps, database config, base models, OpenAPI config
 **Delivers:**
 - Create `notes` and `accounts` Django apps with model stubs (User, Note, Category)
@@ -28,6 +32,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 **Blocks:** Phase 1, Phase 2, Phase 3
 
 ### Task 0B: Frontend Project Structure
+**Status:** pending
 **Scope:** Directory scaffolding, path aliases, base configuration
 **Delivers:**
 - Create `src/` directory structure (`app/`, `data/`, `domains/`, `features/`, `notesDS/`, `lib/`)
@@ -40,6 +45,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 **Blocks:** Phase 1, Phase 4, Phase 5
 
 ### Task 0C: Design System Foundation
+**Status:** pending
 **Scope:** Core notesDS primitives and typography
 **Delivers:**
 - Layout primitives: `Stack`, `Row`, `Container`, `Section`, `CardShell`
@@ -62,6 +68,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 > Features: 1.1, 1.2, 1.3, 1.4, 1.5
 
 ### Task 1A: Auth Backend
+**Status:** pending
 **Scope:** Auth endpoints, user model, token management
 **Delivers:**
 - Set up `dj-rest-auth` + `django-allauth` (see ADR-001)
@@ -76,6 +83,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 **Blocks:** Task 1B
 
 ### Task 1B: Auth Frontend
+**Status:** pending
 **Scope:** Auth domain, screens, and protected routing
 **Delivers:**
 - Generate API hooks via Orval from auth endpoints
@@ -99,6 +107,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 > Features: 5.1, 5.2
 
 ### Task 2A: Categories Backend
+**Status:** pending
 **Scope:** Category model, seed data, list endpoint
 **Delivers:**
 - Category model (title, color) in `notes` app
@@ -112,6 +121,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 **Blocks:** Task 3A (notes belong to categories)
 
 ### Task 2B: Categories Frontend Domain
+**Status:** pending
 **Scope:** Category domain layer only (no UI yet — sidebar is built in Phase 4)
 **Delivers:**
 - Generate API hooks via Orval from categories endpoints
@@ -130,6 +140,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 > Features: 3.1, 3.2, 4.1, 4.2, 4.3, 4.5, 4.7
 
 ### Task 3A: Notes Backend
+**Status:** pending
 **Scope:** Note model, CRUD endpoints, auto-save support
 **Delivers:**
 - Note model (title, content, category FK, timestamps) in `notes` app
@@ -154,6 +165,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 > Features: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 5.3, 5.4, 5.5, 5.6, 7.1, 7.2, 7.3, 7.4
 
 ### Task 4A: Notes List Frontend
+**Status:** pending
 **Scope:** Notes domain + notes list feature + category sidebar
 **Delivers:**
 - Generate API hooks via Orval from notes endpoints
@@ -179,6 +191,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 > Features: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7
 
 ### Task 5A: Note Editor Frontend
+**Status:** pending
 **Scope:** Note editor feature with markdown editing and auto-save
 **Delivers:**
 - Integrate a markdown editor library (e.g., `@uiw/react-md-editor` or `react-markdown` + `react-textarea-autosize`)
@@ -207,6 +220,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 > Features: 6.1, 6.2, 6.3, 6.4, 6.5
 
 ### Task 6A: Voice Input Frontend
+**Status:** pending
 **Scope:** Web Speech API integration on note editor
 **Delivers:**
 - `features/note-editor/` additions:
@@ -229,6 +243,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 > Goal: Final QA pass, update all tracking docs.
 
 ### Task 7A: Polish + Docs
+**Status:** pending
 **Scope:** Cross-cutting cleanup, doc updates
 **Delivers:**
 - Verify all features in `docs/product/features.md` and mark as implemented
