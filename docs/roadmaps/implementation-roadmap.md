@@ -87,6 +87,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 
 ### Task 1B: Auth Frontend
 **Status:** done
+**PR:** https://github.com/Lespoir/notes_app/pull/5
 **Scope:** Auth domain, screens, and protected routing
 **Delivers:**
 - Generate API hooks via Orval from auth endpoints
