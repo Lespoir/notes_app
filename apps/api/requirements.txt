@@ -1,0 +1,5 @@
+Django>=6.0
+djangorestframework
+drf-spectacular
+psycopg[binary]
+python-dotenv

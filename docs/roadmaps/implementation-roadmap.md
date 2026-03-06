@@ -18,7 +18,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 > Goal: Establish the backend skeleton, frontend project structure, and design system base.
 
 ### Task 0A: Backend Project Setup
-**Status:** pending
+**Status:** done
 **Scope:** Django apps, database config, base models, OpenAPI config
 **Delivers:**
 - Create `notes` and `accounts` Django apps with model stubs (User, Note, Category)
