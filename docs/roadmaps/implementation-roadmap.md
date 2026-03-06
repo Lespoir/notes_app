@@ -127,6 +127,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 
 ### Task 2B: Categories Frontend Domain
 **Status:** done
+**PR:** https://github.com/Lespoir/notes_app/pull/7
 **Scope:** Category domain layer only (no UI yet — sidebar is built in Phase 4)
 **Delivers:**
 - Generate API hooks via Orval from categories endpoints
