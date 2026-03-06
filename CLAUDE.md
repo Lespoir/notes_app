@@ -92,6 +92,14 @@ It contains complete examples for:
 - Variant component anatomy with CVA (Section 8B)
 - Typography components (Section 8C)
 
+### Figma Design Reference
+
+When implementing a frontend feature:
+1. Check `docs/product/features.md` for the Figma URL(s) linked to that feature group
+2. Extract `fileKey` and `nodeId` from the URL and call `get_design_context` via the Figma MCP tool
+3. Use the returned design (layout, spacing, colors, component structure) as the reference — adapt to existing notesDS components and design tokens
+4. Do not copy raw styles verbatim — map colors to `@theme` tokens and use existing CVA variants and layout primitives
+
 ---
 
 ## Backend (`apps/api/`)
@@ -195,3 +203,14 @@ It contains details on:
 - Business error types and exception mapping
 - Return type guidelines for actions vs readers
 - Testing rules and performance guidelines
+
+---
+
+## Feature Map
+
+After implementing any feature, update **both** of these docs:
+
+1. `docs/product/features.md` — mark implemented features as done
+2. `docs/feature-map.md` — add/update the entry with all created/modified code paths
+
+This keeps the product features documentation and developer code reference aligned.
