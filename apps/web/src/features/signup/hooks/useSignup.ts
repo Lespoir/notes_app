@@ -12,6 +12,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthRepository } from '@/domains/auth/repositories/auth.repository';
 import { signUpSchema } from '@/domains/auth/schemas/auth.schema';
+import { ApiError } from '@/lib/api/fetcher';
 
 export type SignUpErrors = {
   email?: string;
@@ -48,11 +49,19 @@ export const useSignUp = () => {
       await signUp({ email: result.data.email, password: result.data.password });
       router.replace('/');
     } catch (err) {
-      const message =
-        err instanceof Error && err.message.includes('409')
-          ? 'An account with this email already exists.'
-          : 'Something went wrong. Please try again.';
-      setErrors({ server: message });
+      if (err instanceof ApiError) {
+        const apiMessage: string | undefined = err.body?.error?.message;
+        const details = err.body?.error?.details as Record<string, string[]> | undefined;
+        if (details?.email) {
+          setErrors({ email: details.email[0] });
+        } else if (details?.password) {
+          setErrors({ password: details.password[0] });
+        } else {
+          setErrors({ server: apiMessage ?? 'Something went wrong. Please try again.' });
+        }
+      } else {
+        setErrors({ server: 'Something went wrong. Please try again.' });
+      }
     }
   };
 

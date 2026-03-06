@@ -5,4 +5,5 @@ psycopg[binary]
 python-dotenv
 django-allauth[socialaccount]
 dj-rest-auth
+django-cors-headers
 requests

@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthRepository } from '@/domains/auth/repositories/auth.repository';
 import { loginSchema } from '@/domains/auth/schemas/auth.schema';
+import { ApiError } from '@/lib/api/fetcher';
 
 export type LoginErrors = {
   email?: string;
@@ -45,8 +46,13 @@ export const useLogin = () => {
     try {
       await login({ email: result.data.email, password: result.data.password });
       router.replace('/');
-    } catch {
-      setErrors({ server: 'Invalid email or password. Please try again.' });
+    } catch (err) {
+      if (err instanceof ApiError) {
+        const apiMessage: string | undefined = err.body?.error?.message;
+        setErrors({ server: apiMessage ?? 'Invalid email or password. Please try again.' });
+      } else {
+        setErrors({ server: 'Invalid email or password. Please try again.' });
+      }
     }
   };
 

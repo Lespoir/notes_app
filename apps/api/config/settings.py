@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     # Third-party
+    'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
     'drf_spectacular',
@@ -57,6 +58,7 @@ SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -167,6 +169,12 @@ ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+
+# CORS
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+]
 
 # dj-rest-auth
 REST_AUTH = {

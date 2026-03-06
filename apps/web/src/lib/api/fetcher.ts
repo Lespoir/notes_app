@@ -2,6 +2,17 @@ import { getToken } from '@/lib/auth/tokenStorage';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
+export class ApiError extends Error {
+  constructor(
+    public readonly status: number,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    public readonly body: any,
+  ) {
+    super(`HTTP ${status}`);
+    this.name = 'ApiError';
+  }
+}
+
 export async function customFetch<T>(
   url: string,
   options?: RequestInit,
@@ -19,11 +30,12 @@ export async function customFetch<T>(
       ...authHeaders,
       ...options?.headers,
     },
-    credentials: "include",
   });
 
   if (!response.ok) {
-    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    let body: unknown;
+    try { body = await response.json(); } catch { body = null; }
+    throw new ApiError(response.status, body);
   }
 
   // 204 No Content — nothing to parse
