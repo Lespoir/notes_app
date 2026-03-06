@@ -37,7 +37,7 @@ export const useAuthRepository = () => {
   const { mutateAsync: logoutMutation, isPending: isLogoutPending } = useAuthLogout();
 
   const login = async (credentials: { email: string; password: string }): Promise<void> => {
-    const dto = await loginMutation({ email: credentials.email, password: credentials.password });
+    const dto = await loginMutation({ data: { email: credentials.email, password: credentials.password } });
     setToken(dto.key);
     invalidate();
   };
@@ -45,9 +45,11 @@ export const useAuthRepository = () => {
   const signUp = async (credentials: { email: string; password: string }): Promise<void> => {
     // The backend register endpoint takes password1/password2 — we send the same password for both
     const dto = await registerMutation({
-      email: credentials.email,
-      password1: credentials.password,
-      password2: credentials.password,
+      data: {
+        email: credentials.email,
+        password1: credentials.password,
+        password2: credentials.password,
+      },
     });
     setToken(dto.key);
     invalidate();

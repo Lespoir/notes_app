@@ -16,8 +16,14 @@ from rest_framework.views import APIView
 from .schemas import LoginInputSchema, RegisterInputSchema, TokenOutputSchema
 
 
-@extend_schema_view(
-    post=extend_schema(
+class AuthRegisterView(RegisterView):
+    """
+    POST /api/v1/auth/register/
+
+    Create a new user account. Returns an auth token on success.
+    """
+
+    @extend_schema(
         tags=["auth"],
         operation_id="auth_register",
         summary="Register a new user account",
@@ -28,17 +34,18 @@ from .schemas import LoginInputSchema, RegisterInputSchema, TokenOutputSchema
             status.HTTP_409_CONFLICT: OpenApiResponse(description="Email already registered"),
         },
     )
-)
-class AuthRegisterView(RegisterView):
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+
+
+class AuthLoginView(LoginView):
     """
-    POST /api/v1/auth/register/
+    POST /api/v1/auth/login/
 
-    Create a new user account. Returns an auth token on success.
+    Authenticate with email and password. Returns an auth token on success.
     """
 
-
-@extend_schema_view(
-    post=extend_schema(
+    @extend_schema(
         tags=["auth"],
         operation_id="auth_login",
         summary="Log in with email and password",
@@ -48,28 +55,10 @@ class AuthRegisterView(RegisterView):
             status.HTTP_400_BAD_REQUEST: OpenApiResponse(description="Invalid credentials"),
         },
     )
-)
-class AuthLoginView(LoginView):
-    """
-    POST /api/v1/auth/login/
-
-    Authenticate with email and password. Returns an auth token on success.
-    """
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
 
 
-@extend_schema_view(
-    post=extend_schema(
-        tags=["auth"],
-        operation_id="auth_logout",
-        summary="Log out the current user",
-        request=None,
-        responses={
-            status.HTTP_200_OK: OpenApiResponse(description="Successfully logged out"),
-            status.HTTP_401_UNAUTHORIZED: OpenApiResponse(description="Not authenticated"),
-        },
-    ),
-    get=extend_schema(exclude=True),
-)
 class AuthLogoutView(LogoutView):
     """
     POST /api/v1/auth/logout/
@@ -78,6 +67,23 @@ class AuthLogoutView(LogoutView):
     """
 
     permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        tags=["auth"],
+        operation_id="auth_logout",
+        summary="Log out the current user",
+        request=None,
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(description="Successfully logged out"),
+            status.HTTP_401_UNAUTHORIZED: OpenApiResponse(description="Not authenticated"),
+        },
+    )
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+
+    @extend_schema(exclude=True)
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
 
 @extend_schema_view(
