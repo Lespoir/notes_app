@@ -86,7 +86,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 **Blocks:** Task 1B
 
 ### Task 1B: Auth Frontend
-**Status:** pending
+**Status:** done
 **Scope:** Auth domain, screens, and protected routing
 **Delivers:**
 - Generate API hooks via Orval from auth endpoints
