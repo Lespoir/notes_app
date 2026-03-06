@@ -3,3 +3,6 @@ djangorestframework
 drf-spectacular
 psycopg[binary]
 python-dotenv
+django-allauth[socialaccount]
+dj-rest-auth
+requests
