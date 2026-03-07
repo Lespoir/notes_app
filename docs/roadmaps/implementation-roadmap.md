@@ -200,6 +200,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 
 ### Task 5A: Note Editor Frontend
 **Status:** done
+**PR:** https://github.com/Lespoir/notes_app/pull/10
 **Scope:** Note editor feature with markdown editing and auto-save
 **Delivers:**
 - Integrate a markdown editor library (e.g., `@uiw/react-md-editor` or `react-markdown` + `react-textarea-autosize`)
