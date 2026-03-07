@@ -147,6 +147,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 
 ### Task 3A: Notes Backend
 **Status:** done
+**PR:** https://github.com/Lespoir/notes_app/pull/8
 **Scope:** Note model, CRUD endpoints, auto-save support
 **Delivers:**
 - Note model (title, content, category FK, timestamps) in `notes` app
