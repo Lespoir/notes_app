@@ -32,7 +32,7 @@ Only include sections/lines that exist for the feature. -->
 
 - **Backend**
   - Config: `apps/api/config/settings.py` — INSTALLED_APPS, AUTH_USER_MODEL, DATABASES (PostgreSQL), REST_FRAMEWORK, SPECTACULAR_SETTINGS
-  - URLs: `apps/api/config/urls.py` — `/api/v1/schema/`, `/api/v1/schema/swagger-ui/`, `/api/v1/auth/`, `/api/v1/categories/`
+  - URLs: `apps/api/config/urls.py` — `/api/v1/schema/`, `/api/v1/schema/swagger-ui/`, `/api/v1/auth/`, `/api/v1/categories/`, `/api/v1/notes/`
   - Models: `apps/api/accounts/models.py` — custom `User` (email as USERNAME_FIELD)
   - Models: `apps/api/notes/models.py` — `Category` (title, color, UUID PK), `Note` (title, content, category FK, owner FK, UUID PK)
   - Migrations: `apps/api/accounts/migrations/0001_initial.py`
@@ -119,11 +119,27 @@ Only include sections/lines that exist for the feature. -->
 
 ## Note Creation
 
-<!-- Not yet implemented -->
+### Code Paths
+
+- **Backend (Task 3A — Notes Backend)**
+  - Model: `apps/api/notes/models.py` — `Note` (id UUID PK, title CharField blank, content TextField blank, category FK to Category SET_NULL nullable, owner FK to AUTH_USER_MODEL CASCADE, created_at/updated_at auto timestamps; ordered by `-updated_at`)
+  - Action: `apps/api/notes/actions/create_note.py` — `create_note(user, category_id=None)` — creates note with empty title/content; validates category belongs to user via lookup
+  - Action: `apps/api/notes/actions/update_note.py` — `update_note(note_id, user, title=..., content=..., category_id=...)` — partial update with sentinel defaults; raises `NotFoundError` if note not owned by user
+  - Action: `apps/api/notes/actions/delete_note.py` — `delete_note(note_id, user)` — hard delete; raises `NotFoundError` if note not owned by user
+  - Reader: `apps/api/notes/readers/list_notes.py` — `list_notes_for_user(user, category_id=None)` — filters by owner, optional category filter, `select_related("category")`, ordered by `-updated_at`
+  - Reader: `apps/api/notes/readers/get_note.py` — `get_note_for_user(note_id, user)` — fetches single note with `select_related("category")`; raises `NotFoundError` if not found
+  - Lookup: `apps/api/notes/lookups/find_category.py` — `find_category_for_user(category_id, user)` — lightweight category ownership check using `only("id", "title", "color", "user_id")`
+  - Schemas: `apps/api/notes/interfaces/api/schemas.py` — `NoteCategoryOutputSchema`, `NoteOutputSchema`, `NoteCreateInputSchema`, `NoteUpdateInputSchema`
+  - Views: `apps/api/notes/interfaces/api/views.py` — `NoteListCreateView` (GET list, POST create), `NoteDetailView` (GET retrieve, PATCH update, DELETE destroy); all with `@extend_schema` and `IsAuthenticated`
+  - URLs: `apps/api/notes/interfaces/api/urls.py` — `notes_urlpatterns`: `GET/POST /api/v1/notes/`, `GET/PATCH/DELETE /api/v1/notes/{note_id}/`
+  - Config URLs: `apps/api/config/urls.py` — mounts `notes_urlpatterns` at `/api/v1/notes/`
+  - Tests: `apps/api/notes/tests/test_note_actions.py` — unit tests for `create_note`, `update_note`, `delete_note` (creation defaults, persistence, partial update sentinel, ownership enforcement, NotFoundError/PermissionDeniedError)
+  - Tests: `apps/api/notes/tests/test_note_readers.py` — unit tests for `list_notes` (filtering, ordering, user isolation) and `get_note` (ownership check, NotFoundError)
+  - Tests: `apps/api/notes/tests/test_notes_api.py` — API contract tests for all five notes endpoints (auth wiring, status codes, response shape, user isolation, category filter, ordering, partial update, OpenAPI schema presence)
 
 ## Note Editing
 
-<!-- Not yet implemented -->
+<!-- Not yet implemented — frontend only, backend covered by Task 3A -->
 
 ## Categories
 
@@ -137,7 +153,7 @@ Only include sections/lines that exist for the feature. -->
   - Schemas: `apps/api/notes/interfaces/api/schemas.py` — `CategoryOutputSchema` (id, title, color, note_count, created_at)
   - Views: `apps/api/notes/interfaces/api/views.py` — `CategoryListView` (GET, `@extend_schema`, `IsAuthenticated`)
   - URLs: `apps/api/notes/interfaces/api/urls.py` — `GET /api/v1/categories/`
-  - Config URLs: `apps/api/config/urls.py` — mounts `notes.interfaces.api.urls` at `/api/v1/categories/`
+  - Config URLs: `apps/api/config/urls.py` — mounts `categories_urlpatterns` at `/api/v1/categories/`
   - Registration hook: `apps/api/accounts/actions/register.py` — `register_user()` calls `seed_default_categories(user=user)` after creating the user (side effect explicit in action layer)
   - Tests: `apps/api/notes/tests/test_actions.py` — unit tests for `seed_default_categories` and registration hook
   - Tests: `apps/api/notes/tests/test_readers.py` — unit tests for `list_categories_for_user` (note count, isolation)
