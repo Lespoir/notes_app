@@ -1,18 +1,63 @@
 /**
- * Note editor page — placeholder.
- * Full implementation in Task 5A (Note Editor).
+ * Note editor page.
+ *
+ * This page is thin — all logic lives in useNoteEditor.
+ * Background color changes to match the selected category.
  */
-import { Container } from '@/notesDS/primitives/container';
-import { Stack } from '@/notesDS/primitives/stack';
-import { H1, Muted } from '@/notesDS/components/ui/typography';
+'use client';
 
-export default function NoteEditorPage() {
+import { use } from 'react';
+import { useNoteEditor } from '@/features/note-editor/hooks/useNoteEditor';
+import { NoteEditorHeader } from '@/features/note-editor/components/NoteEditorHeader';
+import { NoteTitle } from '@/features/note-editor/components/NoteTitle';
+import { NoteContent } from '@/features/note-editor/components/NoteContent';
+import { Stack } from '@/notesDS/primitives/stack';
+import { Container } from '@/notesDS/primitives/container';
+import { Muted } from '@/notesDS/components/ui/typography';
+import { cn } from '@/notesDS/utils/cn';
+
+type NoteEditorPageProps = {
+  params: Promise<{ id: string }>;
+};
+
+export default function NoteEditorPage({ params }: NoteEditorPageProps) {
+  const { id } = use(params);
+  const {
+    title,
+    content,
+    categoryId,
+    bgClass,
+    lastEditedLabel,
+    categories,
+    isLoading,
+    isSaving,
+    handleTitleChange,
+    handleContentChange,
+    handleCategoryChange,
+    handleBack,
+  } = useNoteEditor(id);
+
   return (
-    <Container size="lg" className="flex min-h-screen items-center justify-center">
-      <Stack gap={2} align="center">
-        <H1>Note Editor</H1>
-        <Muted>Editor coming soon — Task 5A.</Muted>
-      </Stack>
-    </Container>
+    <Stack as="main" gap={0} className={cn('min-h-screen transition-colors duration-300', bgClass)}>
+      <Container className="max-w-3xl px-6 py-8">
+        <NoteEditorHeader
+          lastEditedLabel={lastEditedLabel}
+          isSaving={isSaving}
+          categories={categories}
+          selectedCategoryId={categoryId}
+          onCategoryChange={handleCategoryChange}
+          onBack={handleBack}
+        />
+
+        {isLoading ? (
+          <Muted className="py-12 text-center">Loading note…</Muted>
+        ) : (
+          <Stack gap={4}>
+            <NoteTitle value={title} onChange={handleTitleChange} />
+            <NoteContent value={content} onChange={handleContentChange} />
+          </Stack>
+        )}
+      </Container>
+    </Stack>
   );
 }

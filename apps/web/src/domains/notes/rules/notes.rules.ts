@@ -37,3 +37,45 @@ export function mapCategoryColorToToken(hex: string): { dot: string; bg: string 
   if (normalized === '#7ed321') return { dot: 'bg-category-yellow', bg: 'bg-category-yellow-bg' };
   return { dot: 'bg-muted-foreground', bg: 'bg-secondary' };
 }
+
+// ── Auto-save rules (ADR-003) ──────────────────────────────────────────────────
+
+type NoteState = {
+  title: string;
+  content: string;
+  categoryId: string | null;
+};
+
+type UpdatePayload = {
+  title?: string;
+  content?: string;
+  category?: string | null;
+};
+
+/**
+ * Returns true when title or content has changed — these use the debounced
+ * (~1s) save path. Category changes are handled by shouldImmediateSave.
+ */
+export function shouldDebounceSave(prev: NoteState, next: NoteState): boolean {
+  return prev.title !== next.title || prev.content !== next.content;
+}
+
+/**
+ * Returns true when the categoryId has changed — category saves are immediate
+ * (no debounce) per ADR-003.
+ */
+export function shouldImmediateSave(prev: NoteState, next: NoteState): boolean {
+  return prev.categoryId !== next.categoryId;
+}
+
+/**
+ * Builds the minimal PATCH payload containing only the fields that changed.
+ * This avoids sending unchanged values to the backend.
+ */
+export function buildUpdatePayload(prev: NoteState, next: NoteState): UpdatePayload {
+  const payload: UpdatePayload = {};
+  if (prev.title !== next.title) payload.title = next.title;
+  if (prev.content !== next.content) payload.content = next.content;
+  if (prev.categoryId !== next.categoryId) payload.category = next.categoryId;
+  return payload;
+}
