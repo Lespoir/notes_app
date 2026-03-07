@@ -19,6 +19,7 @@ export default function NotesPage() {
     onSelectCategory,
     onCreateNote,
     onNoteClick,
+    onLogout,
   } = useNotesListScreen();
 
   return (
@@ -30,6 +31,7 @@ export default function NotesPage() {
             categories={sidebarCategories}
             selectedCategoryId={selectedCategoryId}
             onSelectCategory={onSelectCategory}
+            onLogout={onLogout}
           />
         </div>
 

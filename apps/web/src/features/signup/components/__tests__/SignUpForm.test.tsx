@@ -41,7 +41,7 @@ describe('SignUpForm', () => {
 
     it('renders a link to navigate to the login screen (feature 1.4)', () => {
       render(<SignUpForm {...defaultProps} />);
-      expect(screen.getByRole('link', { name: /log in|sign in|login/i })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: /already friends|log in|sign in|login/i })).toBeInTheDocument();
     });
   });
 
