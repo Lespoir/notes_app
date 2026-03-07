@@ -45,8 +45,8 @@
 
 | # | Feature | Status |
 |---|---------|--------|
-| 3.1 | Create a new note by clicking the "new note" icon | 🟡 |
-| 3.2 | Note is automatically created on click (no explicit save action) | 🟡 |
+| 3.1 | Create a new note by clicking the "new note" icon | 🟡 (backend ✅) |
+| 3.2 | Note is automatically created on click (no explicit save action) | ✅ |
 | 3.3 | New note opens immediately for editing | 🟡 |
 
 ## 4. Note Editing
@@ -57,13 +57,15 @@
 
 | # | Feature | Status |
 |---|---------|--------|
-| 4.1 | Edit note title inline | 🟡 |
-| 4.2 | Edit note content inline | 🟡 |
-| 4.3 | Auto-save on edit (no manual save button) | 🟡 |
+| 4.1 | Edit note title inline | 🟡 (backend ✅) |
+| 4.2 | Edit note content inline | 🟡 (backend ✅) |
+| 4.3 | Auto-save on edit (no manual save button) | 🟡 (backend ✅) |
 | 4.4 | Last edited timestamp updates automatically as user types | 🟡 |
-| 4.5 | Change note category via dropdown selector | 🟡 |
+| 4.5 | Change note category via dropdown selector | 🟡 (backend ✅) |
 | 4.6 | Note background color changes to match the selected category color | 🟡 |
-| 4.7 | Close note to return to the notes list screen | 🟡 |
+| 4.7 | Close note to return to the notes list screen | 🟡 (backend ✅) |
+
+> **Backend (Task 3A):** API endpoints for create (`POST /api/v1/notes/`), list (`GET /api/v1/notes/`), retrieve (`GET /api/v1/notes/{id}/`), partial update (`PATCH /api/v1/notes/{id}/`), and delete (`DELETE /api/v1/notes/{id}/`) are implemented. Frontend UI is pending Task 5A.
 
 ## 5. Categories
 
