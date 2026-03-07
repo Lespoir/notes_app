@@ -11,8 +11,10 @@ import { useNoteEditor } from '@/features/note-editor/hooks/useNoteEditor';
 import { NoteEditorHeader } from '@/features/note-editor/components/NoteEditorHeader';
 import { NoteTitle } from '@/features/note-editor/components/NoteTitle';
 import { NoteContent } from '@/features/note-editor/components/NoteContent';
+import { VoiceInputButton } from '@/features/note-editor/components/VoiceInputButton';
 import { Stack } from '@/notesDS/primitives/stack';
 import { Container } from '@/notesDS/primitives/container';
+import { Row } from '@/notesDS/primitives/row';
 import { Muted } from '@/notesDS/components/ui/typography';
 import { cn } from '@/notesDS/utils/cn';
 
@@ -35,6 +37,10 @@ export default function NoteEditorPage({ params }: NoteEditorPageProps) {
     handleContentChange,
     handleCategoryChange,
     handleBack,
+    isVoiceSupported,
+    isRecording,
+    startVoiceInput,
+    stopVoiceInput,
   } = useNoteEditor(id);
 
   return (
@@ -55,6 +61,14 @@ export default function NoteEditorPage({ params }: NoteEditorPageProps) {
           <Stack gap={4}>
             <NoteTitle value={title} onChange={handleTitleChange} />
             <NoteContent value={content} onChange={handleContentChange} />
+            <Row justify="end">
+              <VoiceInputButton
+                isSupported={isVoiceSupported}
+                isRecording={isRecording}
+                onStart={startVoiceInput}
+                onStop={stopVoiceInput}
+              />
+            </Row>
           </Stack>
         )}
       </Container>

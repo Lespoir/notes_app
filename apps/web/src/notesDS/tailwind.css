@@ -49,6 +49,9 @@
   --color-action-dark: oklch(22% 0 0);          /* #2c2c2c */
   --color-action-dark-foreground: oklch(100% 0 0);
 
+  /* Recording status indicator — green dot shown while mic is active */
+  --color-recording: oklch(55% 0.18 145);       /* vivid green */
+
   /* Caption / overline text */
   --color-caption: oklch(52% 0.09 70);
 

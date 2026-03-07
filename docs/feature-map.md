@@ -192,7 +192,14 @@ Only include sections/lines that exist for the feature. -->
 
 ## Voice Input
 
-<!-- Not yet implemented -->
+### Code Paths
+
+- **Frontend (Task 6A — Voice Input Frontend)**
+  - Lib hook: `apps/web/src/lib/speech/useSpeechToText.ts` — `useSpeechToText({ onTranscript, onEnd? })` — wraps browser `SpeechRecognition` (with `webkitSpeechRecognition` fallback); exposes `isSupported`, `isRecording`, `transcript`, `start()`, `stop()`; cleans up recognition session on unmount
+  - Component: `apps/web/src/features/note-editor/components/VoiceInputButton.tsx` — renders dark circular mic button (idle) or stop button + animated green recording dot (recording); returns `null` when speech is unsupported
+  - Screen hook additions: `apps/web/src/features/note-editor/hooks/useNoteEditor.ts` — integrates `useSpeechToText`; `handleTranscript` appends transcribed text to content and schedules debounced save; `handleTranscriptEnd` flushes pending save immediately; exposes `isVoiceSupported`, `isRecording`, `startVoiceInput`, `stopVoiceInput`
+  - Page additions: `apps/web/src/app/notes/[id]/page.tsx` — destructures voice props, renders `<VoiceInputButton>` below note content aligned to the right
+  - Design token addition: `apps/web/src/notesDS/tailwind.css` — `--color-recording` (oklch green) for the animated recording indicator dot
 
 ## Date Display
 

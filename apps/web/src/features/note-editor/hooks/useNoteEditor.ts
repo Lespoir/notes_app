@@ -17,6 +17,7 @@ import {
 } from '@/domains/notes/repositories/notes.repository';
 import { useCategoriesRepository } from '@/domains/categories/repositories/categories.repository';
 import { formatNoteDate, mapCategoryColorToToken } from '@/domains/notes/rules/notes.rules';
+import { useSpeechToText } from '@/lib/speech/useSpeechToText';
 import type { CategoryEntity } from '@/domains/categories/entities/category.entity';
 
 export type EditorCategory = CategoryEntity & {
@@ -41,6 +42,14 @@ export type UseNoteEditorReturn = {
   /** Category change triggers an immediate save (no debounce). */
   handleCategoryChange: (categoryId: string | null) => void;
   handleBack: () => void;
+  /** Whether the current browser supports the Web Speech API. */
+  isVoiceSupported: boolean;
+  /** Whether voice recording is currently active. */
+  isRecording: boolean;
+  /** Start a voice recording session. */
+  startVoiceInput: () => void;
+  /** Stop the active voice recording session. */
+  stopVoiceInput: () => void;
 };
 
 const DEBOUNCE_MS = 1000;
@@ -194,6 +203,48 @@ export const useNoteEditor = (noteId: string): UseNoteEditorReturn => {
     router.push('/');
   }, [flushSave, router]);
 
+  // ── Voice input ───────────────────────────────────────────────────────────
+
+  // Keep a ref to the latest content so the transcript callback always appends
+  // to the most up-to-date value without introducing stale-closure issues.
+  const contentRef = useRef(content);
+  useEffect(() => {
+    contentRef.current = content;
+  }, [content]);
+
+  const handleTranscript = useCallback(
+    (text: string) => {
+      const next = contentRef.current
+        ? `${contentRef.current} ${text}`
+        : text;
+      // Update the ref immediately so rapid successive transcripts don't
+      // overwrite each other before the effect has a chance to re-sync.
+      contentRef.current = next;
+      setContent(next);
+      // Stage the transcribed text for debounced auto-save.
+      scheduleSave({ title, content: next, categoryId });
+    },
+    // title and categoryId are stable across transcript events within a session.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [scheduleSave, title, categoryId],
+  );
+
+  const handleTranscriptEnd = useCallback(() => {
+    // Flush the pending save immediately when the session ends so the
+    // transcribed content is persisted without waiting for the debounce timer.
+    flushSave();
+  }, [flushSave]);
+
+  const {
+    isSupported: isVoiceSupported,
+    isRecording,
+    startRecording: startVoiceInput,
+    stopRecording: stopVoiceInput,
+  } = useSpeechToText({
+    onTranscript: handleTranscript,
+    onEnd: handleTranscriptEnd,
+  });
+
   // ── Derived display data ──────────────────────────────────────────────────
 
   const categories: EditorCategory[] = rawCategories.map((cat) => ({
@@ -222,5 +273,9 @@ export const useNoteEditor = (noteId: string): UseNoteEditorReturn => {
     handleContentChange,
     handleCategoryChange,
     handleBack,
+    isVoiceSupported,
+    isRecording,
+    startVoiceInput,
+    stopVoiceInput,
   };
 };

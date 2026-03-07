@@ -229,7 +229,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 > Features: 6.1, 6.2, 6.3, 6.4, 6.5
 
 ### Task 6A: Voice Input Frontend
-**Status:** pending
+**Status:** done
 **Scope:** Web Speech API integration on note editor
 **Delivers:**
 - `features/note-editor/` additions:
@@ -258,7 +258,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 - Verify all features in `docs/product/features.md` and mark as implemented
 - Update `docs/feature-map.md` with all created/modified code paths
 - Mark ADR decisions as "Accepted" with chosen options
-- Fix any remaining UI inconsistencies against Figma designs
+- Fix any remaining UI inconsistencies against designs available in docs/designs
 - Ensure OpenAPI spec is accurate and Orval generates clean hooks
 
 **Depends on:** All previous phases

@@ -86,11 +86,11 @@
 
 | # | Feature | Status |
 |---|---------|--------|
-| 6.1 | Microphone button on the note editing screen to start voice input | 🟡 |
-| 6.2 | Real-time speech-to-text transcription using the browser Web Speech API | 🟡 |
-| 6.3 | Transcribed text is appended to the note content field | 🟡 |
-| 6.4 | Stop button to end the voice recording session | 🟡 |
-| 6.5 | Visual recording status indicator (green dot) while actively recording | 🟡 |
+| 6.1 | Microphone button on the note editing screen to start voice input | ✅ |
+| 6.2 | Real-time speech-to-text transcription using the browser Web Speech API | ✅ |
+| 6.3 | Transcribed text is appended to the note content field | ✅ |
+| 6.4 | Stop button to end the voice recording session | ✅ |
+| 6.5 | Visual recording status indicator (green dot) while actively recording | ✅ |
 
 ## 7. Date Display
 
