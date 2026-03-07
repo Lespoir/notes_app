@@ -13,6 +13,7 @@ import { useCategoriesRepository } from '@/domains/categories/repositories/categ
 import {
   formatNoteDate,
   truncateContent,
+  stripMarkdown,
   mapCategoryColorToToken,
   isNoteEmpty,
 } from '@/domains/notes/rules/notes.rules';
@@ -50,7 +51,7 @@ export const useNotesListScreen = () => {
     return {
       id: note.id,
       title: note.title.trim() || 'Untitled',
-      contentPreview: truncateContent(note.content, 100),
+      contentPreview: truncateContent(stripMarkdown(note.content), 100),
       date: formatNoteDate(note.updatedAt),
       categoryTitle: note.category?.title ?? '',
       categoryColorClasses: colorClasses,
