@@ -39,6 +39,7 @@ import {
   useNotesCreate,
   useNotesRetrieve,
   useNotesPartialUpdate,
+  useNotesDestroy,
 } from '@/data/generated/notes/notes';
 import { queryClient } from '@/lib/query/query-client';
 import { useNotesRepository } from '../notes.repository';
@@ -94,6 +95,10 @@ describe('useNotesRepository — updateNote', () => {
       mutateAsync: mockPartialUpdateMutateAsync,
       isPending: false,
     } as unknown as ReturnType<typeof useNotesPartialUpdate>);
+
+    vi.mocked(useNotesDestroy).mockReturnValue({
+      mutateAsync: vi.fn(),
+    } as unknown as ReturnType<typeof useNotesDestroy>);
   });
 
   it('calls the generated partial-update mutateAsync with the noteId and patch payload', async () => {

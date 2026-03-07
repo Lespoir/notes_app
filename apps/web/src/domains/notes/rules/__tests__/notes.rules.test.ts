@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import {
   formatNoteDate,
+  formatNoteDateShort,
   truncateContent,
   mapCategoryColorToToken,
   isNoteEmpty,
@@ -18,20 +19,24 @@ describe('formatNoteDate', () => {
     vi.useRealTimers();
   });
 
-  it('returns "Today" for a date that is today', () => {
-    expect(formatNoteDate(new Date('2026-03-07T08:00:00Z'))).toBe('Today');
+  const timePattern = /at \d+:\d{2}\s*(am|pm)/i;
+
+  it('returns "Today at HH:MM" for a date that is today', () => {
+    expect(formatNoteDate(new Date('2026-03-07T08:00:00Z'))).toMatch(/^Today at /i);
   });
 
-  it('returns "Today" even for the last second of today', () => {
-    expect(formatNoteDate(new Date('2026-03-07T23:59:59Z'))).toBe('Today');
+  it('returns "Today at HH:MM" even for the last second of today', () => {
+    expect(formatNoteDate(new Date('2026-03-07T23:59:59Z'))).toMatch(/^Today at /i);
   });
 
-  it('returns "Yesterday" for a date that was yesterday', () => {
-    expect(formatNoteDate(new Date('2026-03-06T12:00:00Z'))).toBe('Yesterday');
+  it('returns "Yesterday at HH:MM" for a date that was yesterday', () => {
+    expect(formatNoteDate(new Date('2026-03-06T12:00:00Z'))).toMatch(/^Yesterday at /i);
   });
 
-  it('returns a "Month Day" string for older dates', () => {
-    expect(formatNoteDate(new Date('2026-03-05T10:00:00Z'))).toBe('Mar 5');
+  it('returns a "Month Day at HH:MM" string for older dates', () => {
+    const result = formatNoteDate(new Date('2026-03-05T10:00:00Z'));
+    expect(result).toMatch(/^Mar 5/);
+    expect(result).toMatch(timePattern);
   });
 
   it('returns a "Month Day" string without the year', () => {
@@ -40,11 +45,45 @@ describe('formatNoteDate', () => {
   });
 
   it('formats single-digit day without leading zero', () => {
-    expect(formatNoteDate(new Date('2026-01-03T10:00:00Z'))).toBe('Jan 3');
+    const result = formatNoteDate(new Date('2026-01-03T10:00:00Z'));
+    expect(result).toMatch(/^Jan 3/);
+    expect(result).toMatch(timePattern);
   });
 
   it('uses abbreviated month names', () => {
-    expect(formatNoteDate(new Date('2026-02-14T10:00:00Z'))).toBe('Feb 14');
+    const result = formatNoteDate(new Date('2026-02-14T10:00:00Z'));
+    expect(result).toMatch(/^Feb 14/);
+    expect(result).toMatch(timePattern);
+  });
+});
+
+// ── formatNoteDateShort ───────────────────────────────────────────────────────
+
+describe('formatNoteDateShort', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-03-07T14:00:00Z'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('returns "Today" for a date that is today', () => {
+    expect(formatNoteDateShort(new Date('2026-03-07T08:00:00Z'))).toBe('Today');
+  });
+
+  it('returns "Yesterday" for a date that was yesterday', () => {
+    expect(formatNoteDateShort(new Date('2026-03-06T12:00:00Z'))).toBe('Yesterday');
+  });
+
+  it('returns "Month Day" for older dates', () => {
+    expect(formatNoteDateShort(new Date('2026-03-05T10:00:00Z'))).toBe('Mar 5');
+  });
+
+  it('does not include a time component', () => {
+    expect(formatNoteDateShort(new Date('2026-03-07T08:00:00Z'))).not.toMatch(/at/i);
+    expect(formatNoteDateShort(new Date('2026-03-05T10:00:00Z'))).not.toMatch(/at/i);
   });
 });
 

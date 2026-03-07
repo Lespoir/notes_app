@@ -24,7 +24,7 @@ export function CategorySidebar({
   onLogout,
 }: CategorySidebarProps) {
   return (
-    <div className="flex w-48 shrink-0 flex-col pt-1" style={{ minHeight: 'calc(100vh - 3.5rem)' }}>
+    <div className="flex h-full w-48 shrink-0 flex-col pt-1">
       <Stack gap={1} className="flex-1">
         <button
           onClick={() => onSelectCategory(undefined)}

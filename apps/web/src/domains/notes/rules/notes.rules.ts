@@ -2,8 +2,11 @@
  * Pure business rules for the notes domain.
  */
 
-/** Format a note date as "Today", "Yesterday", or "Mar 5". */
-export function formatNoteDate(date: Date): string {
+/**
+ * Format a note date as "Today", "Yesterday", or "Mar 5" — no time component.
+ * Used for list card previews where space is limited.
+ */
+export function formatNoteDateShort(date: Date): string {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const yesterday = new Date(today);
@@ -15,6 +18,23 @@ export function formatNoteDate(date: Date): string {
   if (dateOnly.getTime() === yesterday.getTime()) return 'Yesterday';
 
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+/** Format a note date as "Today at 8:39pm", "Yesterday at 8:39pm", or "Mar 5 at 8:39pm". */
+export function formatNoteDate(date: Date): string {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+
+  const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const time = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase();
+
+  if (dateOnly.getTime() === today.getTime()) return `Today at ${time}`;
+  if (dateOnly.getTime() === yesterday.getTime()) return `Yesterday at ${time}`;
+
+  const datePart = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  return `${datePart} at ${time}`;
 }
 
 /** Truncate content to maxLength, appending ellipsis if needed. */
@@ -51,13 +71,13 @@ export function isNoteEmpty(note: { title: string; content: string }): boolean {
   return !note.title.trim() && !note.content.trim();
 }
 
-/** Map a seed category hex color to Tailwind token classes for dot and card background. */
-export function mapCategoryColorToToken(hex: string): { dot: string; bg: string } {
+/** Map a seed category hex color to Tailwind token classes for dot, card background, and border. */
+export function mapCategoryColorToToken(hex: string): { dot: string; bg: string; border: string } {
   const normalized = hex.toLowerCase();
-  if (normalized === '#f5a623') return { dot: 'bg-category-orange', bg: 'bg-category-orange-bg' };
-  if (normalized === '#4a90e2') return { dot: 'bg-category-teal', bg: 'bg-category-teal-bg' };
-  if (normalized === '#7ed321') return { dot: 'bg-category-yellow', bg: 'bg-category-yellow-bg' };
-  return { dot: 'bg-muted-foreground', bg: 'bg-secondary' };
+  if (normalized === '#f5a623') return { dot: 'bg-category-orange', bg: 'bg-category-orange-bg', border: 'border-category-orange' };
+  if (normalized === '#4a90e2') return { dot: 'bg-category-teal', bg: 'bg-category-teal-bg', border: 'border-category-teal' };
+  if (normalized === '#7ed321') return { dot: 'bg-category-yellow', bg: 'bg-category-yellow-bg', border: 'border-category-yellow' };
+  return { dot: 'bg-muted-foreground', bg: 'bg-secondary', border: 'border-input' };
 }
 
 // ── Auto-save rules (ADR-003) ──────────────────────────────────────────────────
