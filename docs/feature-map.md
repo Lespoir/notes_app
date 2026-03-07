@@ -50,8 +50,8 @@ Only include sections/lines that exist for the feature. -->
   - Path alias: `apps/web/tsconfig.json` — `@/*` → `./src/*`
   - Orval config: `apps/web/orval.config.ts` — input `http://localhost:8000/api/schema/`, output `src/data/generated`, client `react-query`, mutator `src/lib/api/fetcher.ts`
   - Custom fetch: `apps/web/src/lib/api/fetcher.ts` — base URL from `NEXT_PUBLIC_API_URL`, `credentials: include`
-  - Query client: `apps/web/src/lib/query/query-client.ts` — `makeQueryClient()` factory + `queryClient` singleton
-  - Query provider: `apps/web/src/lib/query/QueryProvider.tsx` — wraps children in `QueryClientProvider` + `ReactQueryDevtools`
+  - Query client: `apps/web/src/lib/query/query-client.ts` — `makeQueryClient()` factory + `queryClient` singleton (shared by both the provider and all repositories so `invalidateQueries` calls are effective)
+  - Query provider: `apps/web/src/lib/query/QueryProvider.tsx` — wraps children in `QueryClientProvider` using the shared singleton `queryClient` + `ReactQueryDevtools`
   - Query barrel: `apps/web/src/lib/query/index.ts` — exports `makeQueryClient`, `queryClient`, `QueryProvider`
   - Root layout: `apps/web/src/app/layout.tsx` — `<html>`, `<body>`, `QueryProvider` root wrapper
   - Test setup: `apps/web/vitest.config.ts`, `apps/web/vitest.setup.ts`
@@ -121,9 +121,9 @@ Only include sections/lines that exist for the feature. -->
   - Generated hooks: `apps/web/src/data/generated/notes/notes.ts` — `useNotesList`, `useNotesCreate`, `useNotesRetrieve`, `useNotesPartialUpdate`, `useNotesDestroy` (TanStack Query v5 wrappers)
   - Generated models: `apps/web/src/data/generated/model/noteOutputSchema.ts`, `noteCreateInputSchema.ts`, `noteCategoryOutputSchema.ts`, `notesListParams.ts`, `patchedNoteUpdateInputSchema.ts`
   - Entity: `apps/web/src/domains/notes/entities/note.entity.ts` — `NoteCategoryEmbedded`, `NoteEntity`
-  - Rules: `apps/web/src/domains/notes/rules/notes.rules.ts` — `formatNoteDate()` (today/yesterday/date), `truncateContent()`, `mapCategoryColorToToken()` (hex → Tailwind token classes)
+  - Rules: `apps/web/src/domains/notes/rules/notes.rules.ts` — `formatNoteDate()` (today/yesterday/date), `truncateContent()`, `stripMarkdown()` (strips markdown syntax for plain-text preview cards), `mapCategoryColorToToken()` (hex → Tailwind token classes)
   - Repository: `apps/web/src/domains/notes/repositories/notes.repository.ts` — `useNotesRepository({ categoryId? })` — wraps generated hooks, maps DTOs to `NoteEntity`, `createNote()` with cache invalidation (notes + categories); exports `toNoteEntity` mapper
-  - Screen hook: `apps/web/src/features/notes-list/hooks/useNotesList.ts` — `useNotesListScreen()` — category filter state, note card presentation mapping, sidebar category mapping, create note + navigation
+  - Screen hook: `apps/web/src/features/notes-list/hooks/useNotesList.ts` — `useNotesListScreen()` — category filter state, note card presentation mapping (uses `stripMarkdown` before truncation so preview cards show plain text), sidebar category mapping, create note + navigation
   - Component: `apps/web/src/features/notes-list/components/NotePreviewCard.tsx` — card with category color bg, date, title (serif), content preview
   - Component: `apps/web/src/features/notes-list/components/CategorySidebar.tsx` — color dot + title + count, active state, "All Categories" filter
   - Component: `apps/web/src/features/notes-list/components/EmptyState.tsx` — heading, description, "New Note" button
@@ -160,11 +160,11 @@ Only include sections/lines that exist for the feature. -->
   - Schema: `apps/web/src/domains/notes/schemas/note.schema.ts` — `updateNoteSchema` (Zod, title/content/category optional); exports `UpdateNoteInput`
   - Screen hook: `apps/web/src/features/note-editor/hooks/useNoteEditor.ts` — `useNoteEditor(noteId)` — fetches note on mount, seeds local state, debounced auto-save (~1s) for title/content, immediate save for category, `beforeunload` flush, exposes `lastEditedAt`, `lastEditedLabel`, `bgClass`, `isSaving`
   - Component: `apps/web/src/features/note-editor/components/NoteTitle.tsx` — ghost `Input` with display-font styling for inline title editing
-  - Component: `apps/web/src/features/note-editor/components/NoteContent.tsx` — auto-growing `TextareaAutosize` for markdown content
+  - Component: `apps/web/src/features/note-editor/components/NoteContent.tsx` — markdown editor with Edit/Preview toggle: Edit mode uses monospace `TextareaAutosize`; Preview mode renders via `react-markdown` + `remark-gfm` (headings, bold/italic, code, tables, blockquotes, GFM)
   - Component: `apps/web/src/features/note-editor/components/CategorySelector.tsx` — color dot + native `<select>` for category picker; immediate save on change
   - Component: `apps/web/src/features/note-editor/components/NoteEditorHeader.tsx` — back button, last-edited timestamp, saving indicator, `CategorySelector`
   - Page: `apps/web/src/app/notes/[id]/page.tsx` — replaces placeholder; extracts `id` from params via `use()`, renders header + title + content; background color class from `bgClass`
-  - Dependency added: `react-textarea-autosize` ^8.x
+  - Dependencies added: `react-textarea-autosize` ^8.x, `react-markdown` ^10.x, `remark-gfm` ^4.x
 
 ## Categories
 
@@ -192,7 +192,14 @@ Only include sections/lines that exist for the feature. -->
 
 ## Voice Input
 
-<!-- Not yet implemented -->
+### Code Paths
+
+- **Frontend (Task 6A — Voice Input Frontend)**
+  - Lib hook: `apps/web/src/lib/speech/useSpeechToText.ts` — `useSpeechToText({ onTranscript, onEnd? })` — wraps browser `SpeechRecognition` (with `webkitSpeechRecognition` fallback); exposes `isSupported`, `isRecording`, `transcript`, `start()`, `stop()`; cleans up recognition session on unmount
+  - Component: `apps/web/src/features/note-editor/components/VoiceInputButton.tsx` — renders dark circular mic button (idle) or stop button + animated green recording dot (recording); returns `null` when speech is unsupported
+  - Screen hook additions: `apps/web/src/features/note-editor/hooks/useNoteEditor.ts` — integrates `useSpeechToText`; `handleTranscript` appends transcribed text to content and schedules debounced save; `handleTranscriptEnd` flushes pending save immediately; exposes `isVoiceSupported`, `isRecording`, `startVoiceInput`, `stopVoiceInput`
+  - Page additions: `apps/web/src/app/notes/[id]/page.tsx` — destructures voice props, renders `<VoiceInputButton>` below note content aligned to the right
+  - Design token addition: `apps/web/src/notesDS/tailwind.css` — `--color-recording` (oklch green) for the animated recording indicator dot
 
 ## Date Display
 

@@ -24,6 +24,28 @@ export function truncateContent(content: string, maxLength: number): string {
   return trimmed.slice(0, maxLength).trimEnd() + '…';
 }
 
+/**
+ * Strip common markdown syntax to produce plain text suitable for preview cards.
+ * Not exhaustive — targets the most common constructs.
+ */
+export function stripMarkdown(content: string): string {
+  return content
+    .replace(/^#{1,6}\s+/gm, '')       // headings
+    .replace(/\*\*(.+?)\*\*/g, '$1')   // bold
+    .replace(/\*(.+?)\*/g, '$1')       // italic
+    .replace(/~~(.+?)~~/g, '$1')       // strikethrough
+    .replace(/`{3}[\s\S]*?`{3}/g, '')  // fenced code blocks
+    .replace(/`(.+?)`/g, '$1')         // inline code
+    .replace(/!\[.*?\]\(.*?\)/g, '')   // images
+    .replace(/\[(.+?)\]\(.*?\)/g, '$1') // links
+    .replace(/^[-*+]\s+/gm, '')        // unordered list bullets
+    .replace(/^\d+\.\s+/gm, '')        // ordered list numbers
+    .replace(/^>\s+/gm, '')            // blockquotes
+    .replace(/^[-*_]{3,}$/gm, '')      // horizontal rules
+    .replace(/\n{2,}/g, ' ')           // collapse blank lines
+    .trim();
+}
+
 /** Returns true if a note has no title and no content — considered empty/reusable. */
 export function isNoteEmpty(note: { title: string; content: string }): boolean {
   return !note.title.trim() && !note.content.trim();
