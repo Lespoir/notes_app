@@ -152,7 +152,19 @@ Only include sections/lines that exist for the feature. -->
 
 ## Note Editing
 
-<!-- Not yet implemented — frontend only, backend covered by Task 3A -->
+### Code Paths
+
+- **Frontend (Task 5A — Note Editor Frontend)**
+  - Repository additions: `apps/web/src/domains/notes/repositories/notes.repository.ts` — `getNote(noteId)` (imperative fetch via raw `notesRetrieve`), `updateNote(noteId, payload)` (PATCH with cache invalidation for notes list + single note + categories), `updateNoteSync(noteId, payload)` (fire-and-forget exported standalone function for `beforeunload` flush)
+  - Rules additions: `apps/web/src/domains/notes/rules/notes.rules.ts` — `shouldDebounceSave()`, `shouldImmediateSave()`, `buildUpdatePayload()` (pure functions encoding ADR-003 auto-save logic)
+  - Schema: `apps/web/src/domains/notes/schemas/note.schema.ts` — `updateNoteSchema` (Zod, title/content/category optional); exports `UpdateNoteInput`
+  - Screen hook: `apps/web/src/features/note-editor/hooks/useNoteEditor.ts` — `useNoteEditor(noteId)` — fetches note on mount, seeds local state, debounced auto-save (~1s) for title/content, immediate save for category, `beforeunload` flush, exposes `lastEditedAt`, `lastEditedLabel`, `bgClass`, `isSaving`
+  - Component: `apps/web/src/features/note-editor/components/NoteTitle.tsx` — ghost `Input` with display-font styling for inline title editing
+  - Component: `apps/web/src/features/note-editor/components/NoteContent.tsx` — auto-growing `TextareaAutosize` for markdown content
+  - Component: `apps/web/src/features/note-editor/components/CategorySelector.tsx` — color dot + native `<select>` for category picker; immediate save on change
+  - Component: `apps/web/src/features/note-editor/components/NoteEditorHeader.tsx` — back button, last-edited timestamp, saving indicator, `CategorySelector`
+  - Page: `apps/web/src/app/notes/[id]/page.tsx` — replaces placeholder; extracts `id` from params via `use()`, renders header + title + content; background color class from `bgClass`
+  - Dependency added: `react-textarea-autosize` ^8.x
 
 ## Categories
 
