@@ -19,5 +19,10 @@ def list_categories_for_user(*, user) -> QuerySet:
     """
     return (
         Category.objects.filter(user=user)
-        .annotate(note_count=Count("notes", filter=Q(notes__owner=user)))
+        .annotate(
+            note_count=Count(
+                "notes",
+                filter=Q(notes__owner=user) & ~Q(notes__title="", notes__content=""),
+            )
+        )
     )

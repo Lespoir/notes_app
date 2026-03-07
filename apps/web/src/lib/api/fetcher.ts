@@ -1,4 +1,6 @@
-import { getToken } from '@/lib/auth/tokenStorage';
+import { clearToken, getToken } from '@/lib/auth/tokenStorage';
+
+const AUTH_ENDPOINTS = ['/api/auth/login/', '/api/auth/register/'];
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
@@ -35,6 +37,13 @@ export async function customFetch<T>(
   if (!response.ok) {
     let body: unknown;
     try { body = await response.json(); } catch { body = null; }
+
+    if (response.status === 401 && !AUTH_ENDPOINTS.some(ep => url.includes(ep))) {
+      clearToken();
+      window.location.href = '/auth/login';
+      return new Promise(() => {}); // prevent further execution
+    }
+
     throw new ApiError(response.status, body);
   }
 

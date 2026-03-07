@@ -6,12 +6,12 @@ Creates a note with empty title and content, optionally assigned to a category.
 from notes.models import Note
 
 
-def create_note(*, owner, category=None) -> Note:
+def create_note(*, owner, category) -> Note:
     """
     Create a new note owned by the given user.
 
     - title and content default to empty strings.
-    - category is optional; pass a Category instance to assign it.
+    - category is required; pass a Category instance to assign it.
 
     Returns the newly created Note instance.
     """

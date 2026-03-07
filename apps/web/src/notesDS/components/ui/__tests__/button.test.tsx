@@ -48,7 +48,8 @@ describe("Button", () => {
           Secondary
         </Button>,
       );
-      expect(screen.getByTestId("btn").className).toMatch(/bg-secondary/);
+      expect(screen.getByTestId("btn").className).toMatch(/bg-transparent/);
+      expect(screen.getByTestId("btn").className).toMatch(/border-primary/);
     });
 
     it("does not apply primary background classes", () => {

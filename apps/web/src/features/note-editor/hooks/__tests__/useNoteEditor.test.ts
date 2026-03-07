@@ -353,8 +353,8 @@ describe('useNoteEditor', () => {
       );
     });
 
-    it('calls updateNote with null when category is cleared', async () => {
-      mockUpdateNote.mockResolvedValue(makeNote({ category: null }));
+    it('calls updateNote with the new category id when category is changed', async () => {
+      mockUpdateNote.mockResolvedValue(makeNote({ category: { id: 'cat-2', title: 'Personal', color: '#FF0000' } }));
 
       let result: ReturnType<typeof renderHook<ReturnType<typeof useNoteEditor>, unknown>>['result'];
 
@@ -363,12 +363,12 @@ describe('useNoteEditor', () => {
       });
 
       await act(async () => {
-        result!.current.handleCategoryChange(null);
+        result!.current.handleCategoryChange('cat-2');
       });
 
       expect(mockUpdateNote).toHaveBeenCalledWith(
         'note-uuid-1',
-        expect.objectContaining({ category: null }),
+        expect.objectContaining({ category: 'cat-2' }),
       );
     });
   });

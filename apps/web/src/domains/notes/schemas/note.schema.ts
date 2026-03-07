@@ -6,7 +6,7 @@ import { z } from 'zod';
 export const updateNoteSchema = z.object({
   title: z.string().max(255).optional(),
   content: z.string().optional(),
-  category: z.string().uuid().nullable().optional(),
+  category: z.string().uuid().optional(),
 });
 
 export type UpdateNoteInput = z.infer<typeof updateNoteSchema>;
