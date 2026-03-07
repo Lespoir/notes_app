@@ -1,20 +1,12 @@
+import Image from 'next/image';
 import { Stack } from '@/notesDS/primitives/stack';
-import { H2, Muted } from '@/notesDS/components/ui/typography';
-import { Button } from '@/notesDS/components/ui/button';
+import { Muted } from '@/notesDS/components/ui/typography';
 
-type EmptyStateProps = {
-  onCreateNote: () => void;
-  isCreatePending: boolean;
-};
-
-export function EmptyState({ onCreateNote, isCreatePending }: EmptyStateProps) {
+export function EmptyState() {
   return (
     <Stack gap={4} align="center" justify="center" className="flex-1 py-24">
-      <H2>No notes yet</H2>
-      <Muted>Create your first note to get started.</Muted>
-      <Button variant="secondary" onClick={onCreateNote} disabled={isCreatePending}>
-        {isCreatePending ? 'Creating…' : '+ New Note'}
-      </Button>
+      <Image src="/illustrations/cup.png" alt="Boba tea cup" width={180} height={180} />
+      <Muted className="text-base italic">I&apos;m just here waiting for your charming notes...</Muted>
     </Stack>
   );
 }

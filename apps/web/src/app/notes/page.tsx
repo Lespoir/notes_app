@@ -23,10 +23,17 @@ export default function NotesPage() {
   } = useNotesListScreen();
 
   return (
-    <div className="min-h-screen bg-background">
-      <Row align="start" gap={0} className="min-h-screen">
+    <div className="flex h-screen flex-col bg-background">
+      {/* Top bar */}
+      <Row justify="end" className="shrink-0 px-6 pt-8 pb-0">
+        <Button variant="secondary" size="sm" onClick={onCreateNote} disabled={isCreatePending}>
+          {isCreatePending ? 'Creating…' : '+ New Note'}
+        </Button>
+      </Row>
+
+      <Row align="start" gap={8} className="min-h-0 flex-1">
         {/* Sidebar */}
-        <div className="w-52 shrink-0 p-6 pt-8">
+        <div className="flex h-full w-52 shrink-0 flex-col pl-6 pt-6 pb-6">
           <CategorySidebar
             categories={sidebarCategories}
             selectedCategoryId={selectedCategoryId}
@@ -36,19 +43,11 @@ export default function NotesPage() {
         </div>
 
         {/* Main content */}
-        <div className="flex min-h-screen flex-1 flex-col p-6 pt-8">
-          {/* Header */}
-          <Row justify="end" className="mb-6">
-            <Button variant="secondary" size="sm" onClick={onCreateNote} disabled={isCreatePending}>
-              {isCreatePending ? 'Creating…' : '+ New Note'}
-            </Button>
-          </Row>
-
-          {/* Content */}
+        <div className="flex flex-1 flex-col overflow-y-auto pr-6 pt-6 pb-6" style={{ height: '100%' }}>
           {isLoading ? (
             <Muted className="py-12 text-center">Loading notes…</Muted>
           ) : isEmpty ? (
-            <EmptyState onCreateNote={onCreateNote} isCreatePending={isCreatePending} />
+            <EmptyState />
           ) : (
             <div className="grid grid-cols-3 gap-4">
               {noteCards.map((card) => (

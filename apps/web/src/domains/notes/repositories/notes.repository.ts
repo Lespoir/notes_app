@@ -11,6 +11,7 @@ import {
   useNotesCreate,
   useNotesRetrieve,
   useNotesPartialUpdate,
+  useNotesDestroy,
   getNotesListQueryKey,
   getNotesRetrieveQueryKey,
   notesPartialUpdate,
@@ -51,6 +52,7 @@ export const useNotesRepository = (options?: { categoryId?: string }) => {
   const { data, isLoading, isError, error } = useNotesList(params);
   const { mutateAsync: createMutateAsync, isPending: isCreatePending } = useNotesCreate();
   const { mutateAsync: updateMutateAsync } = useNotesPartialUpdate();
+  const { mutateAsync: destroyMutateAsync } = useNotesDestroy();
 
   const notes: NoteEntity[] =
     data?.status === 200 && data.data ? data.data.map(toNoteEntity) : [];
@@ -98,6 +100,18 @@ export const useNotesRepository = (options?: { categoryId?: string }) => {
     throw new Error('Failed to update note');
   };
 
+  const deleteNote = async (noteId: string): Promise<void> => {
+    const response = await destroyMutateAsync({ noteId });
+    if (response.status === 204) {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: getNotesListQueryKey() }),
+        queryClient.invalidateQueries({ queryKey: getCategoriesListQueryKey() }),
+      ]);
+      return;
+    }
+    throw new Error('Failed to delete note');
+  };
+
   return {
     notes,
     isLoading,
@@ -107,6 +121,7 @@ export const useNotesRepository = (options?: { categoryId?: string }) => {
     createNote,
     getNote,
     updateNote,
+    deleteNote,
   };
 };
 

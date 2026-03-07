@@ -12,9 +12,8 @@ import { useNotesRepository } from '@/domains/notes/repositories/notes.repositor
 import { useCategoriesRepository } from '@/domains/categories/repositories/categories.repository';
 import { useAuthState } from '@/lib/auth';
 import {
-  formatNoteDate,
+  formatNoteDateShort,
   truncateContent,
-  stripMarkdown,
   mapCategoryColorToToken,
   isNoteEmpty,
 } from '@/domains/notes/rules/notes.rules';
@@ -57,8 +56,8 @@ export const useNotesListScreen = () => {
       return {
         id: note.id,
         title: note.title.trim() || 'Untitled',
-        contentPreview: truncateContent(stripMarkdown(note.content), 100),
-        date: formatNoteDate(note.updatedAt),
+        contentPreview: truncateContent(note.content, 100),
+        date: formatNoteDateShort(note.updatedAt),
         categoryTitle: note.category?.title ?? '',
         categoryColorClasses: colorClasses,
       };

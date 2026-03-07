@@ -34,6 +34,8 @@ export type UseNoteEditorReturn = {
   lastEditedLabel: string;
   /** Background color token class driven by the current category. */
   bgClass: string;
+  /** Border color token class driven by the current category. */
+  borderClass: string;
   categories: EditorCategory[];
   isLoading: boolean;
   isSaving: boolean;
@@ -42,6 +44,7 @@ export type UseNoteEditorReturn = {
   /** Category change triggers an immediate save (no debounce). */
   handleCategoryChange: (categoryId: string) => void;
   handleBack: () => void;
+  handleDelete: () => Promise<void>;
   /** Whether the current browser supports the Web Speech API. */
   isVoiceSupported: boolean;
   /** Whether voice recording is currently active. */
@@ -56,7 +59,7 @@ const DEBOUNCE_MS = 1000;
 
 export const useNoteEditor = (noteId: string): UseNoteEditorReturn => {
   const router = useRouter();
-  const { isLoading, getNote, updateNote } = useNotesRepository();
+  const { isLoading, getNote, updateNote, deleteNote } = useNotesRepository();
   const { categories: rawCategories } = useCategoriesRepository();
 
   // ── Local optimistic state ────────────────────────────────────────────────
@@ -199,6 +202,16 @@ export const useNoteEditor = (noteId: string): UseNoteEditorReturn => {
     router.push('/');
   }, [flushSave, router]);
 
+  const handleDelete = useCallback(async () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    pendingRef.current = null;
+    await deleteNote(noteId);
+    router.push('/');
+  }, [noteId, deleteNote, router]);
+
   // ── Voice input ───────────────────────────────────────────────────────────
 
   // Keep a ref to the latest content so the transcript callback always appends
@@ -249,9 +262,9 @@ export const useNoteEditor = (noteId: string): UseNoteEditorReturn => {
   }));
 
   const currentCategory = rawCategories.find((c) => c.id === categoryId) ?? null;
-  const bgClass = currentCategory
-    ? mapCategoryColorToToken(currentCategory.color).bg
-    : 'bg-background';
+  const colorTokens = currentCategory ? mapCategoryColorToToken(currentCategory.color) : null;
+  const bgClass = colorTokens?.bg ?? 'bg-background';
+  const borderClass = colorTokens?.border ?? 'border-input';
 
   const lastEditedLabel = formatNoteDate(lastEditedAt);
 
@@ -262,6 +275,7 @@ export const useNoteEditor = (noteId: string): UseNoteEditorReturn => {
     lastEditedAt,
     lastEditedLabel,
     bgClass,
+    borderClass,
     categories,
     isLoading,
     isSaving,
@@ -269,6 +283,7 @@ export const useNoteEditor = (noteId: string): UseNoteEditorReturn => {
     handleContentChange,
     handleCategoryChange,
     handleBack,
+    handleDelete,
     isVoiceSupported,
     isRecording,
     startVoiceInput,

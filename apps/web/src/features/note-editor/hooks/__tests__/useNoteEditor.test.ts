@@ -68,6 +68,7 @@ function setupMocks(noteOverrides = {}) {
     createNote: vi.fn(),
     getNote: mockGetNote.mockResolvedValue(makeNote(noteOverrides)),
     updateNote: mockUpdateNote,
+    deleteNote: vi.fn(),
   } as ReturnType<typeof useNotesRepository>);
 
   vi.mocked(useCategoriesRepository).mockReturnValue({
