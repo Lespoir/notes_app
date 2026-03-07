@@ -60,7 +60,7 @@ export const useAuthRepository = () => {
   const logout = async (): Promise<void> => {
     await logoutMutation();
     clearToken();
-    invalidate();
+    queryClient.clear();
   };
 
   return {
