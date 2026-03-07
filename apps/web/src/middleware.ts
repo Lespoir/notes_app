@@ -44,5 +44,5 @@ export const config = {
    *   - Next.js internals (_next/static, _next/image, favicon.ico)
    *   - API routes that handle their own auth
    */
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|api/).*)'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|api/|illustrations/).*)'],
 };

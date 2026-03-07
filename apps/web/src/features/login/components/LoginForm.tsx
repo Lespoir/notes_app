@@ -4,10 +4,9 @@ import React from 'react';
 import Link from 'next/link';
 import { Stack } from '@/notesDS/primitives/stack';
 import { Row } from '@/notesDS/primitives/row';
-import { CardShell } from '@/notesDS/primitives/cardShell';
 import { Button } from '@/notesDS/components/ui/button';
 import { Input } from '@/notesDS/components/ui/input';
-import { H2, Muted, Small } from '@/notesDS/components/ui/typography';
+import { H1, Small } from '@/notesDS/components/ui/typography';
 import { PasswordToggle } from './PasswordToggle';
 import type { LoginErrors } from '../hooks/useLogin';
 
@@ -40,83 +39,78 @@ export function LoginForm({
   };
 
   return (
-    <CardShell padding="lg" className="w-full max-w-sm bg-surface">
-      <Stack gap={6}>
-        <Stack gap={1}>
-          <H2>Welcome back</H2>
-          <Muted>Log in to your account to continue.</Muted>
-        </Stack>
+    <Stack gap={6} align="center" className="w-full max-w-sm">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/illustrations/cactus.png"
+        alt="Happy cactus"
+        className="h-24 object-contain"
+      />
 
-        {errors.server && (
-          <Small className="rounded-[var(--radius-sm)] bg-destructive/10 px-3 py-2 text-destructive block">
-            {errors.server}
-          </Small>
-        )}
+      <H1>Yay, You&apos;re Back!</H1>
 
-        <form onSubmit={handleSubmit} noValidate>
-          <Stack gap={4}>
-            <Stack gap={1}>
-              <label htmlFor="login-email">
-                <Small className="text-foreground font-medium">Email</Small>
-              </label>
-              <Input
-                id="login-email"
-                type="email"
-                placeholder="you@example.com"
-                autoComplete="email"
-                value={email}
-                variant={errors.email ? 'error' : 'default'}
-                onChange={(e) => onEmailChange(e.target.value)}
-              />
-              {errors.email && (
-                <Small className="text-destructive">{errors.email}</Small>
-              )}
-            </Stack>
+      {errors.server && (
+        <Small className="rounded-[var(--radius-sm)] bg-destructive/10 px-3 py-2 text-destructive block w-full">
+          {errors.server}
+        </Small>
+      )}
 
-            <Stack gap={1}>
-              <label htmlFor="login-password">
-                <Small className="text-foreground font-medium">Password</Small>
-              </label>
-              <Row gap={2} align="center" className="relative">
-                <Input
-                  id="login-password"
-                  type={isPasswordVisible ? 'text' : 'password'}
-                  placeholder="••••••••"
-                  autoComplete="current-password"
-                  value={password}
-                  variant={errors.password ? 'error' : 'default'}
-                  onChange={(e) => onPasswordChange(e.target.value)}
-                  className="pr-10"
-                />
-                <PasswordToggle
-                  visible={isPasswordVisible}
-                  onToggle={onTogglePasswordVisibility}
-                  className="absolute right-3"
-                />
-              </Row>
-              {errors.password && (
-                <Small className="text-destructive">{errors.password}</Small>
-              )}
-            </Stack>
-
-            <Button
-              type="submit"
-              variant="primary"
-              disabled={isLoading}
-              className="w-full"
-            >
-              Log in
-            </Button>
+      <form onSubmit={handleSubmit} noValidate className="w-full">
+        <Stack gap={3}>
+          <Stack gap={1}>
+            <Input
+              id="login-email"
+              type="email"
+              placeholder="Email address"
+              aria-label="Email address"
+              autoComplete="email"
+              value={email}
+              variant={errors.email ? 'error' : 'default'}
+              onChange={(e) => onEmailChange(e.target.value)}
+            />
+            {errors.email && (
+              <Small className="text-destructive">{errors.email}</Small>
+            )}
           </Stack>
-        </form>
 
-        <Row justify="center" gap={1}>
-          <Muted>Don&apos;t have an account?</Muted>
-          <Link href="/auth/signup" className="text-sm font-semibold text-primary hover:underline">
-            Sign up
-          </Link>
-        </Row>
-      </Stack>
-    </CardShell>
+          <Stack gap={1}>
+            <Row gap={0} align="center" className="relative">
+              <Input
+                id="login-password"
+                type={isPasswordVisible ? 'text' : 'password'}
+                placeholder="Password"
+                aria-label="Password"
+                autoComplete="current-password"
+                value={password}
+                variant={errors.password ? 'error' : 'default'}
+                onChange={(e) => onPasswordChange(e.target.value)}
+                className="pr-10"
+              />
+              <PasswordToggle
+                visible={isPasswordVisible}
+                onToggle={onTogglePasswordVisibility}
+                className="absolute right-3"
+              />
+            </Row>
+            {errors.password && (
+              <Small className="text-destructive">{errors.password}</Small>
+            )}
+          </Stack>
+
+          <Button
+            type="submit"
+            variant="secondary"
+            disabled={isLoading}
+            className="w-full mt-3"
+          >
+            Login
+          </Button>
+        </Stack>
+      </form>
+
+      <Link href="/auth/signup" className="text-sm text-primary underline">
+        Oops! I&apos;ve never been here before
+      </Link>
+    </Stack>
   );
 }

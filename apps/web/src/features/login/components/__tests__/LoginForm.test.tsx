@@ -41,7 +41,7 @@ describe('LoginForm', () => {
     it('renders a link to navigate to the sign-up screen (feature 1.4)', () => {
       render(<LoginForm {...defaultProps} />);
       expect(
-        screen.getByRole('link', { name: /sign up|create account|register/i }),
+        screen.getByRole('link', { name: /never been here|sign up|create account|register/i }),
       ).toBeInTheDocument();
     });
   });
