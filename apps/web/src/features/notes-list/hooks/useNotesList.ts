@@ -10,7 +10,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useNotesRepository } from '@/domains/notes/repositories/notes.repository';
 import { useCategoriesRepository } from '@/domains/categories/repositories/categories.repository';
-import { useAuthState } from '@/lib/auth';
+import { useAuthRepository } from '@/domains/auth/repositories/auth.repository';
 import {
   formatNoteDateShort,
   truncateContent,
@@ -36,7 +36,7 @@ export type SidebarCategory = {
 
 export const useNotesListScreen = () => {
   const router = useRouter();
-  const { logout } = useAuthState();
+  const { logout } = useAuthRepository();
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | undefined>(undefined);
 
   // Always fetch all notes — category filtering happens on the frontend so
@@ -87,8 +87,8 @@ export const useNotesListScreen = () => {
     router.push(`/notes/${id}`);
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     router.replace('/auth/login');
   };
 
