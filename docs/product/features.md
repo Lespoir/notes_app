@@ -31,12 +31,12 @@
 
 | # | Feature | Status |
 |---|---------|--------|
-| 2.1 | Display all notes as preview cards | 🟡 |
-| 2.2 | Empty state when user has no notes | 🟡 |
-| 2.3 | Preview card shows: last edited date, category name, title, and content preview | 🟡 |
-| 2.4 | Truncate content in preview card when it overflows | 🟡 |
-| 2.5 | "New note" button/icon to create a note | 🟡 |
-| 2.6 | Category sidebar displayed on the left side | 🟡 |
+| 2.1 | Display all notes as preview cards | ✅ |
+| 2.2 | Empty state when user has no notes | ✅ |
+| 2.3 | Preview card shows: last edited date, category name, title, and content preview | ✅ |
+| 2.4 | Truncate content in preview card when it overflows | ✅ |
+| 2.5 | "New note" button/icon to create a note | ✅ |
+| 2.6 | Category sidebar displayed on the left side | ✅ |
 
 ## 3. Note Creation
 
@@ -45,9 +45,9 @@
 
 | # | Feature | Status |
 |---|---------|--------|
-| 3.1 | Create a new note by clicking the "new note" icon | 🟡 (backend ✅) |
+| 3.1 | Create a new note by clicking the "new note" icon | ✅ |
 | 3.2 | Note is automatically created on click (no explicit save action) | ✅ |
-| 3.3 | New note opens immediately for editing | 🟡 |
+| 3.3 | New note opens immediately for editing | ✅ |
 
 ## 4. Note Editing
 
@@ -76,10 +76,10 @@
 |---|---------|--------|
 | 5.1 | Three default categories auto-created for new users: Random Thoughts, School, Personal | ✅ |
 | 5.2 | Each category has an associated color | ✅ |
-| 5.3 | Category sidebar displays: color indicator, category title, and note count | 🟡 |
-| 5.4 | "All categories" option to view all notes | 🟡 |
-| 5.5 | Click a category to filter notes by that category | 🟡 |
-| 5.6 | Click "All categories" to remove the filter and show all notes | 🟡 |
+| 5.3 | Category sidebar displays: color indicator, category title, and note count | ✅ |
+| 5.4 | "All categories" option to view all notes | ✅ |
+| 5.5 | Click a category to filter notes by that category | ✅ |
+| 5.6 | Click "All categories" to remove the filter and show all notes | ✅ |
 
 ## 6. Voice Input
 
@@ -101,7 +101,7 @@
 
 | # | Feature | Status |
 |---|---------|--------|
-| 7.1 | Display "Today" for notes edited today | 🟡 |
-| 7.2 | Display "Yesterday" for notes edited yesterday | 🟡 |
-| 7.3 | Display "Month Day" (e.g., "Mar 5") for notes older than yesterday | 🟡 |
-| 7.4 | Never display the year | 🟡 |
+| 7.1 | Display "Today" for notes edited today | ✅ |
+| 7.2 | Display "Yesterday" for notes edited yesterday | ✅ |
+| 7.3 | Display "Month Day" (e.g., "Mar 5") for notes older than yesterday | ✅ |
+| 7.4 | Never display the year | ✅ |

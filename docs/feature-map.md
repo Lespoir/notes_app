@@ -115,7 +115,20 @@ Only include sections/lines that exist for the feature. -->
 
 ## Notes List Screen
 
-<!-- Not yet implemented -->
+### Code Paths
+
+- **Frontend (Task 4A — Notes List Frontend)**
+  - Generated hooks: `apps/web/src/data/generated/notes/notes.ts` — `useNotesList`, `useNotesCreate`, `useNotesRetrieve`, `useNotesPartialUpdate`, `useNotesDestroy` (TanStack Query v5 wrappers)
+  - Generated models: `apps/web/src/data/generated/model/noteOutputSchema.ts`, `noteCreateInputSchema.ts`, `noteCategoryOutputSchema.ts`, `notesListParams.ts`, `patchedNoteUpdateInputSchema.ts`
+  - Entity: `apps/web/src/domains/notes/entities/note.entity.ts` — `NoteCategoryEmbedded`, `NoteEntity`
+  - Rules: `apps/web/src/domains/notes/rules/notes.rules.ts` — `formatNoteDate()` (today/yesterday/date), `truncateContent()`, `mapCategoryColorToToken()` (hex → Tailwind token classes)
+  - Repository: `apps/web/src/domains/notes/repositories/notes.repository.ts` — `useNotesRepository({ categoryId? })` — wraps generated hooks, maps DTOs to `NoteEntity`, `createNote()` with cache invalidation (notes + categories); exports `toNoteEntity` mapper
+  - Screen hook: `apps/web/src/features/notes-list/hooks/useNotesList.ts` — `useNotesListScreen()` — category filter state, note card presentation mapping, sidebar category mapping, create note + navigation
+  - Component: `apps/web/src/features/notes-list/components/NotePreviewCard.tsx` — card with category color bg, date, title (serif), content preview
+  - Component: `apps/web/src/features/notes-list/components/CategorySidebar.tsx` — color dot + title + count, active state, "All Categories" filter
+  - Component: `apps/web/src/features/notes-list/components/EmptyState.tsx` — heading, description, "New Note" button
+  - Page: `apps/web/src/app/notes/page.tsx` — sidebar + 3-column note grid, "+ New Note" button, loading/empty states
+  - Placeholder page: `apps/web/src/app/notes/[id]/page.tsx` — placeholder for note editor (Task 5A)
 
 ## Note Creation
 

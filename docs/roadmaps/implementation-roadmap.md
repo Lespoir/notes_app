@@ -172,7 +172,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 > Features: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 5.3, 5.4, 5.5, 5.6, 7.1, 7.2, 7.3, 7.4
 
 ### Task 4A: Notes List Frontend
-**Status:** pending
+**Status:** done
 **Scope:** Notes domain + notes list feature + category sidebar
 **Delivers:**
 - Generate API hooks via Orval from notes endpoints

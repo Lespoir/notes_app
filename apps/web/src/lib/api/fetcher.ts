@@ -40,8 +40,9 @@ export async function customFetch<T>(
 
   // 204 No Content — nothing to parse
   if (response.status === 204) {
-    return undefined as unknown as T;
+    return { data: undefined, status: 204, headers: response.headers } as unknown as T;
   }
 
-  return response.json() as Promise<T>;
+  const data = await response.json();
+  return { data, status: response.status, headers: response.headers } as T;
 }
