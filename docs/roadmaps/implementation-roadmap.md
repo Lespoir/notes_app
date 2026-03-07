@@ -173,6 +173,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 
 ### Task 4A: Notes List Frontend
 **Status:** done
+**PR:** https://github.com/Lespoir/notes_app/pull/9
 **Scope:** Notes domain + notes list feature + category sidebar
 **Delivers:**
 - Generate API hooks via Orval from notes endpoints
