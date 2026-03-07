@@ -230,6 +230,7 @@ This roadmap breaks the notes app into phased implementation tasks scoped for ag
 
 ### Task 6A: Voice Input Frontend
 **Status:** done
+**PR:** https://github.com/Lespoir/notes_app/pull/11
 **Scope:** Web Speech API integration on note editor
 **Delivers:**
 - `features/note-editor/` additions:
