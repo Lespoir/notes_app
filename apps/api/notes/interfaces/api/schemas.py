@@ -45,9 +45,9 @@ class NoteOutputSchema(serializers.Serializer):
 
 
 class NoteCreateInputSchema(serializers.Serializer):
-    """Request body for creating a note. All fields are optional."""
+    """Request body for creating a note."""
 
-    category = serializers.UUIDField(required=False, allow_null=True, default=None)
+    category = serializers.UUIDField(required=True)
 
 
 class NoteUpdateInputSchema(serializers.Serializer):
@@ -55,4 +55,4 @@ class NoteUpdateInputSchema(serializers.Serializer):
 
     title = serializers.CharField(required=False, allow_blank=True, max_length=255)
     content = serializers.CharField(required=False, allow_blank=True)
-    category = serializers.UUIDField(required=False, allow_null=True)
+    category = serializers.UUIDField(required=False)

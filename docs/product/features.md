@@ -21,6 +21,7 @@
 | 1.3 | Toggle password visibility (show/hide) on both sign up and login | ✅ |
 | 1.4 | Navigation between sign up and login screens | ✅ |
 | 1.5 | Redirect to notes screen after successful sign up or login | ✅ |
+| 1.6 | Expired or invalid session automatically clears token and redirects to login | ✅ |
 
 ## 2. Notes List Screen
 
@@ -48,6 +49,7 @@
 | 3.1 | Create a new note by clicking the "new note" icon | ✅ |
 | 3.2 | Note is automatically created on click (no explicit save action) | ✅ |
 | 3.3 | New note opens immediately for editing | ✅ |
+| 3.4 | New note is created under the selected category, or the first available category if none is selected | ✅ |
 
 ## 4. Note Editing
 
@@ -61,7 +63,7 @@
 | 4.2 | Edit note content inline | ✅ |
 | 4.3 | Auto-save on edit (no manual save button) | ✅ |
 | 4.4 | Last edited timestamp updates automatically as user types | ✅ |
-| 4.5 | Change note category via dropdown selector | ✅ |
+| 4.5 | Change note category via dropdown selector (category is required) | ✅ |
 | 4.6 | Note background color changes to match the selected category color | ✅ |
 | 4.7 | Close note to return to the notes list screen | ✅ |
 
@@ -74,7 +76,7 @@
 |---|---------|--------|
 | 5.1 | Three default categories auto-created for new users: Random Thoughts, School, Personal | ✅ |
 | 5.2 | Each category has an associated color | ✅ |
-| 5.3 | Category sidebar displays: color indicator, category title, and note count | ✅ |
+| 5.3 | Category sidebar displays: color indicator, category title, and note count (excludes empty/draft notes) | ✅ |
 | 5.4 | "All categories" option to view all notes | ✅ |
 | 5.5 | Click a category to filter notes by that category | ✅ |
 | 5.6 | Click "All categories" to remove the filter and show all notes | ✅ |

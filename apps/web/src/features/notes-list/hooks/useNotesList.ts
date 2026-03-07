@@ -38,41 +38,47 @@ export const useNotesListScreen = () => {
   const router = useRouter();
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | undefined>(undefined);
 
-  const { notes, isLoading, isCreatePending, createNote } = useNotesRepository({
-    categoryId: selectedCategoryId,
-  });
+  // Always fetch all notes — category filtering happens on the frontend so
+  // sidebar counts are always consistent with what's displayed.
+  const { notes, isLoading, isCreatePending, createNote } = useNotesRepository();
   const { categories } = useCategoriesRepository();
 
-  const noteCards: NoteCard[] = notes.filter((note) => !isNoteEmpty(note)).map((note) => {
-    const colorClasses = note.category
-      ? mapCategoryColorToToken(note.category.color)
-      : { dot: 'bg-muted-foreground', bg: 'bg-secondary' };
+  const nonEmptyNotes = notes.filter((note) => !isNoteEmpty(note));
 
-    return {
-      id: note.id,
-      title: note.title.trim() || 'Untitled',
-      contentPreview: truncateContent(stripMarkdown(note.content), 100),
-      date: formatNoteDate(note.updatedAt),
-      categoryTitle: note.category?.title ?? '',
-      categoryColorClasses: colorClasses,
-    };
-  });
+  const noteCards: NoteCard[] = nonEmptyNotes
+    .filter((note) => selectedCategoryId === undefined || note.category?.id === selectedCategoryId)
+    .map((note) => {
+      const colorClasses = note.category
+        ? mapCategoryColorToToken(note.category.color)
+        : { dot: 'bg-muted-foreground', bg: 'bg-secondary' };
+
+      return {
+        id: note.id,
+        title: note.title.trim() || 'Untitled',
+        contentPreview: truncateContent(stripMarkdown(note.content), 100),
+        date: formatNoteDate(note.updatedAt),
+        categoryTitle: note.category?.title ?? '',
+        categoryColorClasses: colorClasses,
+      };
+    });
 
   const sidebarCategories: SidebarCategory[] = categories.map((cat) => ({
     id: cat.id,
     title: cat.title,
-    noteCount: cat.noteCount,
+    noteCount: nonEmptyNotes.filter((n) => n.category?.id === cat.id).length,
     colorClasses: mapCategoryColorToToken(cat.color),
   }));
 
   const handleCreateNote = async () => {
-    // Reuse the most-recent note if it's still empty — avoids accumulating blank notes.
-    const mostRecent = notes[0];
+    const categoryId = selectedCategoryId ?? categories[0]?.id;
+    if (!categoryId) return;
+    // Reuse the most-recent empty note in the target category — avoids accumulating blank notes.
+    const mostRecent = notes.find((n) => n.category?.id === categoryId);
     if (mostRecent && isNoteEmpty(mostRecent)) {
       router.push(`/notes/${mostRecent.id}`);
       return;
     }
-    const note = await createNote(selectedCategoryId);
+    const note = await createNote(categoryId);
     router.push(`/notes/${note.id}`);
   };
 

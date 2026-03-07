@@ -12,7 +12,7 @@ import type { EditorCategory } from '@/features/note-editor/hooks/useNoteEditor'
 type CategorySelectorProps = {
   categories: EditorCategory[];
   selectedCategoryId: string | null;
-  onChange: (categoryId: string | null) => void;
+  onChange: (categoryId: string) => void;
 };
 
 export function CategorySelector({
@@ -33,10 +33,7 @@ export function CategorySelector({
       )}
       <select
         value={selectedCategoryId ?? ''}
-        onChange={(e) => {
-          const value = e.target.value;
-          onChange(value === '' ? null : value);
-        }}
+        onChange={(e) => onChange(e.target.value)}
         aria-label="Note category"
         className={cn(
           'cursor-pointer border-0 bg-transparent',
@@ -45,7 +42,6 @@ export function CategorySelector({
           'pr-4', // space for implicit native arrow
         )}
       >
-        <option value="">No category</option>
         {categories.map((cat) => (
           <option key={cat.id} value={cat.id}>
             {cat.title}

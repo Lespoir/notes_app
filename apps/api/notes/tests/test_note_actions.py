@@ -53,6 +53,8 @@ class CreateNoteActionTest(TestCase):
 
         if owner is None:
             owner = _make_user()
+        if 'category' not in kwargs:
+            kwargs['category'] = _make_category(owner)
         return create_note(owner=owner, **kwargs)
 
     def test_returns_note_instance(self):
@@ -80,11 +82,13 @@ class CreateNoteActionTest(TestCase):
 
         self.assertEqual(note.content, "")
 
-    def test_note_category_defaults_to_none(self):
-        """A note created without a category has category=None."""
-        note = self._call()
+    def test_note_category_is_assigned(self):
+        """A note is created with the given category assigned."""
+        user = _make_user(email="catassign@example.com")
+        category = _make_category(user)
+        note = self._call(owner=user, category=category)
 
-        self.assertIsNone(note.category)
+        self.assertEqual(note.category, category)
 
     def test_note_owner_is_the_given_user(self):
         """The created note is owned by the user passed to the action."""

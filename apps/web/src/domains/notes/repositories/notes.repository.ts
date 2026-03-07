@@ -40,7 +40,7 @@ export function toNoteEntity(dto: NoteOutputSchema): NoteEntity {
 export type UpdateNotePayload = {
   title?: string;
   content?: string;
-  category?: string | null;
+  category?: string;
 };
 
 const invalidate = () =>
@@ -55,8 +55,8 @@ export const useNotesRepository = (options?: { categoryId?: string }) => {
   const notes: NoteEntity[] =
     data?.status === 200 && data.data ? data.data.map(toNoteEntity) : [];
 
-  const createNote = async (categoryId?: string): Promise<NoteEntity> => {
-    const response = await createMutateAsync({ data: { category: categoryId ?? null } });
+  const createNote = async (categoryId: string): Promise<NoteEntity> => {
+    const response = await createMutateAsync({ data: { category: categoryId } });
     if (response.status === 201) {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: getNotesListQueryKey() }),

@@ -18,7 +18,7 @@ type NoteEditorHeaderProps = {
   isSaving: boolean;
   categories: EditorCategory[];
   selectedCategoryId: string | null;
-  onCategoryChange: (categoryId: string | null) => void;
+  onCategoryChange: (categoryId: string) => void;
   onBack: () => void;
 };
 

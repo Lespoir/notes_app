@@ -49,7 +49,7 @@ Only include sections/lines that exist for the feature. -->
   - Directory scaffolding: `apps/web/src/app/`, `apps/web/src/data/`, `apps/web/src/domains/`, `apps/web/src/features/`, `apps/web/src/notesDS/`, `apps/web/src/lib/`
   - Path alias: `apps/web/tsconfig.json` — `@/*` → `./src/*`
   - Orval config: `apps/web/orval.config.ts` — input `http://localhost:8000/api/schema/`, output `src/data/generated`, client `react-query`, mutator `src/lib/api/fetcher.ts`
-  - Custom fetch: `apps/web/src/lib/api/fetcher.ts` — base URL from `NEXT_PUBLIC_API_URL`, `credentials: include`
+  - Custom fetch: `apps/web/src/lib/api/fetcher.ts` — base URL from `NEXT_PUBLIC_API_URL`, `credentials: include`; 401 responses clear the token and hard-redirect to `/auth/login` (skipped for login/register endpoints to avoid redirect loops)
   - Query client: `apps/web/src/lib/query/query-client.ts` — `makeQueryClient()` factory + `queryClient` singleton (shared by both the provider and all repositories so `invalidateQueries` calls are effective)
   - Query provider: `apps/web/src/lib/query/QueryProvider.tsx` — wraps children in `QueryClientProvider` using the shared singleton `queryClient` + `ReactQueryDevtools`
   - Query barrel: `apps/web/src/lib/query/index.ts` — exports `makeQueryClient`, `queryClient`, `QueryProvider`
@@ -122,8 +122,8 @@ Only include sections/lines that exist for the feature. -->
   - Generated models: `apps/web/src/data/generated/model/noteOutputSchema.ts`, `noteCreateInputSchema.ts`, `noteCategoryOutputSchema.ts`, `notesListParams.ts`, `patchedNoteUpdateInputSchema.ts`
   - Entity: `apps/web/src/domains/notes/entities/note.entity.ts` — `NoteCategoryEmbedded`, `NoteEntity`
   - Rules: `apps/web/src/domains/notes/rules/notes.rules.ts` — `formatNoteDate()` (today/yesterday/date), `truncateContent()`, `stripMarkdown()` (strips markdown syntax for plain-text preview cards), `mapCategoryColorToToken()` (hex → Tailwind token classes)
-  - Repository: `apps/web/src/domains/notes/repositories/notes.repository.ts` — `useNotesRepository({ categoryId? })` — wraps generated hooks, maps DTOs to `NoteEntity`, `createNote()` with cache invalidation (notes + categories); exports `toNoteEntity` mapper
-  - Screen hook: `apps/web/src/features/notes-list/hooks/useNotesList.ts` — `useNotesListScreen()` — category filter state, note card presentation mapping (uses `stripMarkdown` before truncation so preview cards show plain text), sidebar category mapping, create note + navigation
+  - Repository: `apps/web/src/domains/notes/repositories/notes.repository.ts` — `useNotesRepository()` — wraps generated hooks, maps DTOs to `NoteEntity`, `createNote(categoryId)` (category required) with cache invalidation (notes + categories); exports `toNoteEntity` mapper
+  - Screen hook: `apps/web/src/features/notes-list/hooks/useNotesList.ts` — `useNotesListScreen()` — always fetches all notes, filters by selected category on the frontend; note card presentation mapping (uses `stripMarkdown` before truncation); sidebar note counts computed from local filtered list (always consistent with displayed cards); create note defaults to selected or first available category
   - Component: `apps/web/src/features/notes-list/components/NotePreviewCard.tsx` — card with category color bg, date, title (serif), content preview
   - Component: `apps/web/src/features/notes-list/components/CategorySidebar.tsx` — color dot + title + count, active state, "All Categories" filter
   - Component: `apps/web/src/features/notes-list/components/EmptyState.tsx` — heading, description, "New Note" button
@@ -136,13 +136,13 @@ Only include sections/lines that exist for the feature. -->
 
 - **Backend (Task 3A — Notes Backend)**
   - Model: `apps/api/notes/models.py` — `Note` (id UUID PK, title CharField blank, content TextField blank, category FK to Category SET_NULL nullable, owner FK to AUTH_USER_MODEL CASCADE, created_at/updated_at auto timestamps; ordered by `-updated_at`)
-  - Action: `apps/api/notes/actions/create_note.py` — `create_note(user, category_id=None)` — creates note with empty title/content; validates category belongs to user via lookup
+  - Action: `apps/api/notes/actions/create_note.py` — `create_note(owner, category)` — creates note with empty title/content; category is required
   - Action: `apps/api/notes/actions/update_note.py` — `update_note(note_id, user, title=..., content=..., category_id=...)` — partial update with sentinel defaults; raises `NotFoundError` if note not owned by user
   - Action: `apps/api/notes/actions/delete_note.py` — `delete_note(note_id, user)` — hard delete; raises `NotFoundError` if note not owned by user
   - Reader: `apps/api/notes/readers/list_notes.py` — `list_notes_for_user(user, category_id=None)` — filters by owner, optional category filter, `select_related("category")`, ordered by `-updated_at`
   - Reader: `apps/api/notes/readers/get_note.py` — `get_note_for_user(note_id, user)` — fetches single note with `select_related("category")`; raises `NotFoundError` if not found
   - Lookup: `apps/api/notes/lookups/find_category.py` — `find_category_for_user(category_id, user)` — lightweight category ownership check using `only("id", "title", "color", "user_id")`
-  - Schemas: `apps/api/notes/interfaces/api/schemas.py` — `NoteCategoryOutputSchema`, `NoteOutputSchema`, `NoteCreateInputSchema`, `NoteUpdateInputSchema`
+  - Schemas: `apps/api/notes/interfaces/api/schemas.py` — `NoteCategoryOutputSchema`, `NoteOutputSchema`, `NoteCreateInputSchema` (category required), `NoteUpdateInputSchema` (category non-nullable)
   - Views: `apps/api/notes/interfaces/api/views.py` — `NoteListCreateView` (GET list, POST create), `NoteDetailView` (GET retrieve, PATCH update, DELETE destroy); all with `@extend_schema` and `IsAuthenticated`
   - URLs: `apps/api/notes/interfaces/api/urls.py` — `notes_urlpatterns`: `GET/POST /api/v1/notes/`, `GET/PATCH/DELETE /api/v1/notes/{note_id}/`
   - Config URLs: `apps/api/config/urls.py` — mounts `notes_urlpatterns` at `/api/v1/notes/`
@@ -157,11 +157,11 @@ Only include sections/lines that exist for the feature. -->
 - **Frontend (Task 5A — Note Editor Frontend)**
   - Repository additions: `apps/web/src/domains/notes/repositories/notes.repository.ts` — `getNote(noteId)` (imperative fetch via raw `notesRetrieve`), `updateNote(noteId, payload)` (PATCH with cache invalidation for notes list + single note + categories), `updateNoteSync(noteId, payload)` (fire-and-forget exported standalone function for `beforeunload` flush)
   - Rules additions: `apps/web/src/domains/notes/rules/notes.rules.ts` — `shouldDebounceSave()`, `shouldImmediateSave()`, `buildUpdatePayload()` (pure functions encoding ADR-003 auto-save logic)
-  - Schema: `apps/web/src/domains/notes/schemas/note.schema.ts` — `updateNoteSchema` (Zod, title/content/category optional); exports `UpdateNoteInput`
+  - Schema: `apps/web/src/domains/notes/schemas/note.schema.ts` — `updateNoteSchema` (Zod, title/content optional, category optional but non-nullable UUID); exports `UpdateNoteInput`
   - Screen hook: `apps/web/src/features/note-editor/hooks/useNoteEditor.ts` — `useNoteEditor(noteId)` — fetches note on mount, seeds local state, debounced auto-save (~1s) for title/content, immediate save for category, `beforeunload` flush, exposes `lastEditedAt`, `lastEditedLabel`, `bgClass`, `isSaving`
   - Component: `apps/web/src/features/note-editor/components/NoteTitle.tsx` — ghost `Input` with display-font styling for inline title editing
   - Component: `apps/web/src/features/note-editor/components/NoteContent.tsx` — markdown editor with Edit/Preview toggle: Edit mode uses monospace `TextareaAutosize`; Preview mode renders via `react-markdown` + `remark-gfm` (headings, bold/italic, code, tables, blockquotes, GFM)
-  - Component: `apps/web/src/features/note-editor/components/CategorySelector.tsx` — color dot + native `<select>` for category picker; immediate save on change
+  - Component: `apps/web/src/features/note-editor/components/CategorySelector.tsx` — color dot + native `<select>` for category picker; immediate save on change; no "No category" option (category is mandatory)
   - Component: `apps/web/src/features/note-editor/components/NoteEditorHeader.tsx` — back button, last-edited timestamp, saving indicator, `CategorySelector`
   - Page: `apps/web/src/app/notes/[id]/page.tsx` — replaces placeholder; extracts `id` from params via `use()`, renders header + title + content; background color class from `bgClass`
   - Dependencies added: `react-textarea-autosize` ^8.x, `react-markdown` ^10.x, `remark-gfm` ^4.x
@@ -174,7 +174,7 @@ Only include sections/lines that exist for the feature. -->
   - Model: `apps/api/notes/models.py` — `Category` updated to add `user` FK (ForeignKey to AUTH_USER_MODEL, CASCADE, related_name `categories`)
   - Migration: `apps/api/notes/migrations/0002_category_user.py` — adds `user` FK to `Category`
   - Action: `apps/api/notes/actions/seed_categories.py` — `seed_default_categories(user)` — bulk-creates 3 default categories (Random Thoughts #F5A623, School #4A90E2, Personal #7ED321) for a given user
-  - Reader: `apps/api/notes/readers/list_categories.py` — `list_categories_for_user(user)` — filters by user, annotates with `note_count` via `Count("notes")`
+  - Reader: `apps/api/notes/readers/list_categories.py` — `list_categories_for_user(user)` — filters by user, annotates with `note_count` excluding empty notes (blank title AND blank content)
   - Schemas: `apps/api/notes/interfaces/api/schemas.py` — `CategoryOutputSchema` (id, title, color, note_count, created_at)
   - Views: `apps/api/notes/interfaces/api/views.py` — `CategoryListView` (GET, `@extend_schema`, `IsAuthenticated`)
   - URLs: `apps/api/notes/interfaces/api/urls.py` — `GET /api/v1/categories/`

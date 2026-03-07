@@ -40,7 +40,7 @@ export type UseNoteEditorReturn = {
   handleTitleChange: (value: string) => void;
   handleContentChange: (value: string) => void;
   /** Category change triggers an immediate save (no debounce). */
-  handleCategoryChange: (categoryId: string | null) => void;
+  handleCategoryChange: (categoryId: string) => void;
   handleBack: () => void;
   /** Whether the current browser supports the Web Speech API. */
   isVoiceSupported: boolean;
@@ -109,7 +109,7 @@ export const useNoteEditor = (noteId: string): UseNoteEditorReturn => {
       const updated = await updateNote(noteId, {
         title: payload.title,
         content: payload.content,
-        category: payload.categoryId,
+        category: payload.categoryId ?? undefined,
       });
       if (updated?.updatedAt) setLastEditedAt(updated.updatedAt);
     } finally {
@@ -141,7 +141,7 @@ export const useNoteEditor = (noteId: string): UseNoteEditorReturn => {
       updateNoteSync(noteId, {
         title: payload.title,
         content: payload.content,
-        category: payload.categoryId,
+        category: payload.categoryId ?? undefined,
       });
     };
 
@@ -175,7 +175,7 @@ export const useNoteEditor = (noteId: string): UseNoteEditorReturn => {
   );
 
   const handleCategoryChange = useCallback(
-    async (newCategoryId: string | null) => {
+    async (newCategoryId: string) => {
       setCategoryId(newCategoryId);
       // Clear any pending debounced save and fire immediately.
       if (timerRef.current) {
@@ -185,11 +185,7 @@ export const useNoteEditor = (noteId: string): UseNoteEditorReturn => {
       pendingRef.current = null;
       setIsSaving(true);
       try {
-        const updated = await updateNote(noteId, {
-          title,
-          content,
-          category: newCategoryId,
-        });
+        const updated = await updateNote(noteId, { title, content, category: newCategoryId });
         if (updated?.updatedAt) setLastEditedAt(updated.updatedAt);
       } finally {
         setIsSaving(false);

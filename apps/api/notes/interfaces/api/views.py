@@ -95,8 +95,8 @@ class NoteListCreateView(APIView):
     def post(self, request):
         serializer = NoteCreateInputSchema(data=request.data)
         serializer.is_valid(raise_exception=True)
-        category_uuid = serializer.validated_data.get("category")
-        category = find_category_for_user(category_id=category_uuid, user=request.user) if category_uuid else None
+        category_uuid = serializer.validated_data["category"]
+        category = find_category_for_user(category_id=category_uuid, user=request.user)
         note = create_note(owner=request.user, category=category)
         return Response(NoteOutputSchema(note).data, status=status.HTTP_201_CREATED)
 
@@ -162,8 +162,7 @@ class NoteDetailView(APIView):
         if "content" in data:
             kwargs["content"] = data["content"]
         if "category" in data:
-            category_uuid = data["category"]
-            kwargs["category"] = find_category_for_user(category_id=category_uuid, user=request.user) if category_uuid else None
+            kwargs["category"] = find_category_for_user(category_id=data["category"], user=request.user)
         note = update_note(note_id=note_id, owner=request.user, **kwargs)
         return Response(NoteOutputSchema(note).data, status=status.HTTP_200_OK)
 

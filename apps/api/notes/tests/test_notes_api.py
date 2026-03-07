@@ -136,84 +136,87 @@ class CreateNoteEndpointTest(TestCase):
 
     def setUp(self):
         self.client, self.user = _authenticated_client(email="create@example.com")
+        self.category = _make_category(self.user)
 
     def test_create_returns_201(self):
         """POST /api/v1/notes/ returns HTTP 201 Created."""
-        response = self.client.post(NOTES_URL, {}, format="json")
+        response = self.client.post(NOTES_URL, {"category": str(self.category.pk)}, format="json")
 
         self.assertEqual(response.status_code, 201)
 
     def test_create_note_with_no_body(self):
-        """POST /api/v1/notes/ with an empty body succeeds (all fields default)."""
+        """POST /api/v1/notes/ with an empty body returns 400 — category is required."""
         response = self.client.post(NOTES_URL, {}, format="json")
 
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 400)
 
     def test_create_response_contains_id(self):
         """The create response includes an 'id' field."""
-        response = self.client.post(NOTES_URL, {}, format="json")
+        response = self.client.post(NOTES_URL, {"category": str(self.category.pk)}, format="json")
 
         self.assertIn("id", response.json())
 
     def test_create_response_contains_title(self):
         """The create response includes a 'title' field."""
-        response = self.client.post(NOTES_URL, {}, format="json")
+        response = self.client.post(NOTES_URL, {"category": str(self.category.pk)}, format="json")
 
         self.assertIn("title", response.json())
 
     def test_create_response_contains_content(self):
         """The create response includes a 'content' field."""
-        response = self.client.post(NOTES_URL, {}, format="json")
+        response = self.client.post(NOTES_URL, {"category": str(self.category.pk)}, format="json")
 
         self.assertIn("content", response.json())
 
     def test_create_response_contains_category(self):
         """The create response includes a 'category' field (may be null)."""
-        response = self.client.post(NOTES_URL, {}, format="json")
+        response = self.client.post(NOTES_URL, {"category": str(self.category.pk)}, format="json")
 
         data = response.json()
         self.assertIn("category", data)
 
     def test_create_response_contains_created_at(self):
         """The create response includes a 'created_at' field."""
-        response = self.client.post(NOTES_URL, {}, format="json")
+        response = self.client.post(NOTES_URL, {"category": str(self.category.pk)}, format="json")
 
         self.assertIn("created_at", response.json())
 
     def test_create_response_contains_updated_at(self):
         """The create response includes an 'updated_at' field."""
-        response = self.client.post(NOTES_URL, {}, format="json")
+        response = self.client.post(NOTES_URL, {"category": str(self.category.pk)}, format="json")
 
         self.assertIn("updated_at", response.json())
 
     def test_new_note_title_is_empty_by_default(self):
         """A note created without a title has title='' in the response."""
-        response = self.client.post(NOTES_URL, {}, format="json")
+        response = self.client.post(NOTES_URL, {"category": str(self.category.pk)}, format="json")
 
         self.assertEqual(response.json()["title"], "")
 
     def test_new_note_content_is_empty_by_default(self):
         """A note created without content has content='' in the response."""
-        response = self.client.post(NOTES_URL, {}, format="json")
+        response = self.client.post(NOTES_URL, {"category": str(self.category.pk)}, format="json")
 
         self.assertEqual(response.json()["content"], "")
 
-    def test_new_note_category_is_null_by_default(self):
-        """A note created without a category has category=null in the response."""
-        response = self.client.post(NOTES_URL, {}, format="json")
+    def test_new_note_category_is_returned_in_response(self):
+        """The created note's category is embedded in the response."""
+        response = self.client.post(NOTES_URL, {"category": str(self.category.pk)}, format="json")
 
-        self.assertIsNone(response.json()["category"])
+        data = response.json()
+        self.assertIsNotNone(data["category"])
+        self.assertEqual(data["category"]["id"], str(self.category.pk))
 
     def test_note_is_saved_to_database(self):
         """After POST, the note exists in the database."""
-        response = self.client.post(NOTES_URL, {}, format="json")
+        response = self.client.post(NOTES_URL, {"category": str(self.category.pk)}, format="json")
         note_id = response.json()["id"]
 
         self.assertTrue(Note.objects.filter(pk=note_id).exists())
 
     def test_note_is_owned_by_requesting_user(self):
         """The created note is owned by the authenticated user."""
-        response = self.client.post(NOTES_URL, {}, format="json")
+        response = self.client.post(NOTES_URL, {"category": str(self.category.pk)}, format="json")
         note_id = response.json()["id"]
 
         note = Note.objects.get(pk=note_id)
@@ -523,8 +526,8 @@ class UpdateNoteEndpointTest(TestCase):
         for field in ("id", "title", "content", "category", "created_at", "updated_at"):
             self.assertIn(field, response.json(), msg=f"Missing '{field}' in PATCH response")
 
-    def test_patch_category_to_none_clears_category(self):
-        """PATCHing category=null clears the category on the note."""
+    def test_patch_category_to_none_returns_400(self):
+        """PATCHing category=null is rejected — category is mandatory."""
         category = _make_category(self.user)
         note = _make_note(self.user, title="Has cat", category=category)
 
@@ -534,9 +537,7 @@ class UpdateNoteEndpointTest(TestCase):
             format="json",
         )
 
-        self.assertEqual(response.status_code, 200)
-        note.refresh_from_db()
-        self.assertIsNone(note.category)
+        self.assertEqual(response.status_code, 400)
 
 
 # ---------------------------------------------------------------------------

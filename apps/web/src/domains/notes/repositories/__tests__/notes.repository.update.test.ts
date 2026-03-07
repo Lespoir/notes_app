@@ -146,19 +146,19 @@ describe('useNotesRepository — updateNote', () => {
     });
   });
 
-  it('passes a null category to mutateAsync when removing category', async () => {
+  it('passes the category id to mutateAsync when changing category', async () => {
     mockPartialUpdateMutateAsync.mockResolvedValue({
       status: 200,
-      data: makeUpdatedDto({ category: null }),
+      data: makeUpdatedDto({ category: { id: 'cat-2', title: 'Personal', color: '#FF0000' } }),
     });
 
     const { result } = renderHook(() => useNotesRepository());
 
-    await result.current.updateNote('note-uuid-1', { category: null });
+    await result.current.updateNote('note-uuid-1', { category: 'cat-2' });
 
     expect(mockPartialUpdateMutateAsync).toHaveBeenCalledWith({
       noteId: 'note-uuid-1',
-      data: { category: null },
+      data: { category: 'cat-2' },
     });
   });
 
@@ -238,7 +238,7 @@ describe('useNotesRepository — updateNote', () => {
     const { result } = renderHook(() => useNotesRepository());
 
     const entity = await result.current.updateNote('note-uuid-1', {
-      category: null,
+      title: 'No category note',
     });
 
     expect(entity.category).toBeNull();

@@ -32,11 +32,11 @@ const buttonVariants = cva(
           'rounded-[var(--radius-pill)]',
           'px-4 py-3',
         ],
-        /** Outlined pill — secondary surface, primary border + text (Figma "New Note" / login buttons) */
+        /** Outlined pill — transparent bg, primary border + text; hover fills at 20% opacity (Figma "New Note" / login buttons) */
         secondary: [
-          'bg-secondary text-secondary-foreground',
+          'bg-transparent text-primary',
           'border border-primary',
-          'hover:bg-primary hover:text-primary-foreground',
+          'hover:bg-primary/20',
           'rounded-[var(--radius-pill)]',
           'px-4 py-3',
         ],
