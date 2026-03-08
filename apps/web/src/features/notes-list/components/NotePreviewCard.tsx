@@ -30,7 +30,7 @@ export function NotePreviewCard({
       padding="none"
       className={cn(
         'cursor-pointer transition-opacity hover:opacity-90',
-        'max-h-[246px] overflow-hidden',
+        'h-[246px] overflow-hidden',
         'pl-4 pr-[19px] py-4',
         categoryColorClasses.bg,
         borderClass,
