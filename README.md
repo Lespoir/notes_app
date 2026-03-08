@@ -2,6 +2,8 @@
 
 This project was built end-to-end using **Claude Code** as the primary development assistant. Every layer — from product requirements to production code — was produced through an AI-assisted workflow where the human role was to provide direction and review output, not to write code directly.
 
+Backend was implemented based on: https://www.django-rapid-architecture.org/
+
 ---
 
 ## How AI Was Used
